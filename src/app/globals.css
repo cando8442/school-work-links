@@ -1193,6 +1193,7 @@ body.lt-intro-open {
 /* ------------------------------------- */
 .cy-notice-list {
   list-style: none;
+  padding-left: 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -1285,6 +1286,7 @@ body.lt-intro-open {
 /* ------------------------------------- */
 .cy-duty-list {
   list-style: none;
+  padding-left: 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -1369,6 +1371,7 @@ body.lt-intro-open {
 
 .cy-routine-list {
   list-style: none;
+  padding-left: 0;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -1420,6 +1423,7 @@ body.lt-intro-open {
 
 .cy-duty-links {
   list-style: none;
+  padding-left: 0;
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
