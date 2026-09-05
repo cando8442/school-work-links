@@ -578,6 +578,142 @@ export const departments: Department[] = [
         ]
       }
     ]
+  },
+  {
+    id: "affairs-google",
+    name: "교무부(1)",
+    subtitle: "구글 워크스페이스 방식",
+    duties: [
+      {
+        id: "ag-storage",
+        title: "부서 문서 보관·공유",
+        owner: "담당",
+        summary: "부서 자료를 공유 드라이브에 두고 권한으로 관리합니다.",
+        routines: [
+          { cycle: "학년초", what: "공유 드라이브 생성과 부서원 권한 부여" },
+          { cycle: "수시", what: "연도별·업무별 폴더에 자료 저장" },
+          { cycle: "인사이동 시", what: "구성원 교체(파일은 드라이브에 남음)" }
+        ],
+        howto: [
+          "내 드라이브가 아니라 공유 드라이브에 만듭니다. 담당자가 바뀌어도 파일이 따라가지 않습니다",
+          "폴더는 연도 > 업무 순으로 두 단계까지만 만듭니다",
+          "권한은 콘텐츠 관리자(부장), 참여자(부서원), 뷰어(타 부서)로 나눕니다"
+        ],
+        notes: [
+          "개인 계정이 소유한 파일은 전보하면 접근이 끊깁니다. 반드시 공유 드라이브로 옮깁니다",
+          "학교 도메인 계정이 없으면 외부 공유를 막는 설정을 걸기 어렵습니다"
+        ],
+        links: [
+          { label: "구글 드라이브", href: "https://drive.google.com" },
+          { label: "구글 문서", href: "https://docs.google.com" }
+        ]
+      },
+      {
+        id: "ag-collect",
+        title: "자료 취합(서식 수합)",
+        owner: "담당",
+        summary: "설문지로 받아 스프레드시트에 자동으로 모읍니다.",
+        routines: [
+          { cycle: "수시", what: "구글 설문지로 제출 양식 배포" },
+          { cycle: "마감일", what: "응답 시트에서 미제출자 확인과 개별 안내" }
+        ],
+        howto: [
+          "설문지 응답을 스프레드시트로 연결하면 제출 즉시 표가 채워집니다",
+          "미제출자는 명단 시트와 응답 시트를 함수로 대조해 찾습니다",
+          "반복 작업은 Apps Script로 자동 알림까지 붙일 수 있습니다"
+        ],
+        links: [
+          { label: "구글 설문지", href: "https://docs.google.com/forms" },
+          { label: "구글 스프레드시트", href: "https://docs.google.com/spreadsheets" }
+        ]
+      },
+      {
+        id: "ag-meeting",
+        title: "회의·알림·일정",
+        owner: "담당",
+        summary: "캘린더와 채팅으로 부서 일정과 전달사항을 공유합니다.",
+        routines: [
+          { cycle: "매주", what: "부서 협의회 일정 캘린더 등록" },
+          { cycle: "수시", what: "채팅방으로 전달사항 공지" }
+        ],
+        howto: [
+          "부서 캘린더를 따로 만들어 부서원에게 공유합니다",
+          "회의록은 문서 하나를 계속 이어 쓰고 캘린더 일정에 첨부합니다"
+        ],
+        links: [
+          { label: "구글 캘린더", href: "https://calendar.google.com" },
+          { label: "구글 미트", href: "https://meet.google.com" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "affairs-ms",
+    name: "교무부(2)",
+    subtitle: "Microsoft 365 방식",
+    duties: [
+      {
+        id: "am-storage",
+        title: "부서 문서 보관·공유",
+        owner: "담당",
+        summary: "팀즈에 부서 팀을 만들고 그 안 문서함에 자료를 둡니다.",
+        routines: [
+          { cycle: "학년초", what: "부서 팀 생성과 구성원 추가" },
+          { cycle: "수시", what: "업무별 채널 문서함에 자료 저장" },
+          { cycle: "인사이동 시", what: "팀 구성원 교체(파일은 팀에 남음)" }
+        ],
+        howto: [
+          "개인 OneDrive가 아니라 팀 문서함에 올립니다. 담당자가 바뀌어도 파일이 남습니다",
+          "업무별로 채널을 만들면 채널마다 폴더가 자동으로 생깁니다",
+          "권한은 소유자(부장), 구성원(부서원), 게스트(외부)로 나눕니다"
+        ],
+        notes: [
+          "서울시교육청은 클래스이음(o365.sen.go.kr)으로 교직원 계정을 제공합니다",
+          "한글(HWP) 문서는 웹에서 바로 열리지 않아 내려받아 열어야 합니다"
+        ],
+        links: [
+          { label: "클래스이음(서울 M365)", href: "https://o365.sen.go.kr" },
+          { label: "Teams", href: "https://teams.microsoft.com" }
+        ]
+      },
+      {
+        id: "am-collect",
+        title: "자료 취합(서식 수합)",
+        owner: "담당",
+        summary: "Forms로 받아 Excel 파일에 모읍니다.",
+        routines: [
+          { cycle: "수시", what: "Microsoft Forms로 제출 양식 배포" },
+          { cycle: "마감일", what: "응답 파일에서 미제출자 확인과 개별 안내" }
+        ],
+        howto: [
+          "Forms 응답은 팀 문서함의 Excel 파일로 저장됩니다",
+          "미제출자는 명단 시트와 응답 시트를 함수로 대조해 찾습니다",
+          "반복 작업은 Power Automate 흐름으로 알림을 붙일 수 있습니다"
+        ],
+        links: [
+          { label: "Microsoft Forms", href: "https://forms.office.com" },
+          { label: "Office 홈", href: "https://www.office.com" }
+        ]
+      },
+      {
+        id: "am-meeting",
+        title: "회의·알림·일정",
+        owner: "담당",
+        summary: "Teams 채널과 Outlook 일정으로 부서 일정과 전달사항을 공유합니다.",
+        routines: [
+          { cycle: "매주", what: "부서 협의회 일정 Outlook 등록" },
+          { cycle: "수시", what: "Teams 채널 게시글로 전달사항 공지" }
+        ],
+        howto: [
+          "전달사항은 채팅이 아니라 채널 게시글로 남겨야 나중에 찾을 수 있습니다",
+          "회의는 Teams 회의로 열면 녹화와 기록이 같은 채널에 쌓입니다"
+        ],
+        links: [
+          { label: "Outlook", href: "https://outlook.office.com" },
+          { label: "Teams", href: "https://teams.microsoft.com" }
+        ]
+      }
+    ]
   }
 ];
 
