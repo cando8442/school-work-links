@@ -21,25 +21,26 @@ export type LinkTreeTheme = {
   pillColors: PillColor[];
 };
 
+/* 밝은 교무실 톤 — 밝은 교실톤을 기본으로, 노란 포인트를 차분한 블루로 바꾼 사무실 색감입니다. */
 export const theme: LinkTreeTheme = {
   colors: {
-    cream: "#FBF6EE",
-    ink: "#4A3B2A",
-    dim: "#A68A6D",
-    rose: "#F0DFC3",
-    brown: "#8B6B4A",
-    denim: "#C9AE8C",
-    latte: "#F3EAD8",
-    border: "rgba(139,107,74,0.25)",
-    scrollTrack: "rgba(243,234,216,0.5)",
-    scrollThumb: "linear-gradient(180deg, rgba(139,107,74,0.68), rgba(201,174,140,0.58))",
-    scrollThumbHover: "linear-gradient(180deg, rgba(74,59,42,0.78), rgba(201,174,140,0.74))",
-    spiralFront: "#C9963E"
+    cream: "#FBFCFE",
+    ink: "#26364A",
+    dim: "#7B8FA6",
+    rose: "#E3EEF7",
+    brown: "#2F6690",
+    denim: "#9DBCD4",
+    latte: "#EEF4F9",
+    border: "rgba(47,102,144,0.24)",
+    scrollTrack: "rgba(238,244,249,0.6)",
+    scrollThumb: "linear-gradient(180deg, rgba(47,102,144,0.68), rgba(157,188,212,0.58))",
+    scrollThumbHover: "linear-gradient(180deg, rgba(38,54,74,0.78), rgba(157,188,212,0.74))",
+    spiralFront: "#5B8FB9"
   },
   pillColors: [
-    { bg: "#F0DFC3", fg: "#4A3B2A" },
-    { bg: "#8B6B4A", fg: "#FBF6EE" },
-    { bg: "#C9AE8C", fg: "#FBF6EE" },
-    { bg: "#F3EAD8", fg: "#4A3B2A" }
+    { bg: "#E3EEF7", fg: "#26364A" },
+    { bg: "#2F6690", fg: "#FBFCFE" },
+    { bg: "#9DBCD4", fg: "#1E2C3C" },
+    { bg: "#EEF4F9", fg: "#26364A" }
   ]
 };

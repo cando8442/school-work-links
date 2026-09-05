@@ -28,8 +28,12 @@ import { theme } from "@/config/theme";
 const ALL_TABS = ["home", "profile", "story", "board", "photo"] as const;
 type TabName = (typeof ALL_TABS)[number];
 
-/* 연재물이 하나도 없으면 탭 자체를 숨깁니다. */
-const TABS: TabName[] = ALL_TABS.filter(tab => tab !== "story" || episodes.length > 0);
+/* 연재물이나 사진이 하나도 없으면 탭 자체를 숨깁니다. */
+const TABS: TabName[] = ALL_TABS.filter(tab => {
+  if (tab === "story") return episodes.length > 0;
+  if (tab === "photo") return photos.length > 0;
+  return true;
+});
 
 /* 탭 버튼과 오른쪽 위 제목에 쓰는 이름표입니다. profile.ts 값을 따릅니다. */
 const NAV_LABELS: Record<TabName, string> = {

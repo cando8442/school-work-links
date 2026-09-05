@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="학교 배지">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#EEF4F9"/>
+      <stop offset="100%" stop-color="#D9E8F3"/>
+    </linearGradient>
+  </defs>
+  <circle cx="120" cy="120" r="112" fill="url(#sky)" stroke="#2F6690" stroke-width="4"/>
+  <circle cx="120" cy="120" r="98" fill="none" stroke="#9DBCD4" stroke-width="2"/>
+  <path d="M120 44 L184 74 L120 104 L56 74 Z" fill="#2F6690"/>
+  <path d="M120 104 L120 128" stroke="#26364A" stroke-width="5" stroke-linecap="round"/>
+  <path d="M76 84 L76 118 Q120 146 164 118 L164 84" fill="none" stroke="#26364A" stroke-width="5" stroke-linejoin="round"/>
+  <rect x="58" y="150" width="124" height="52" rx="6" fill="#FFFFFF" stroke="#2F6690" stroke-width="4"/>
+  <rect x="72" y="164" width="22" height="24" rx="3" fill="#9DBCD4"/>
+  <rect x="109" y="164" width="22" height="24" rx="3" fill="#9DBCD4"/>
+  <rect x="146" y="164" width="22" height="24" rx="3" fill="#9DBCD4"/>
+</svg>

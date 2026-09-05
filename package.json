@@ -1,14 +1,14 @@
 {
-  "name": "mini-homepage",
+  "name": "school-work-links",
   "version": "1.0.0",
   "private": false,
   "license": "MIT",
-  "author": "ljh6479z",
+  "author": "cando8442",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ljh6479z/mini-homepage.git"
+    "url": "https://github.com/cando8442/school-work-links.git"
   },
-  "homepage": "https://ljh6479z.github.io/mini-homepage/",
+  "homepage": "https://cando8442.github.io/school-work-links/",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
