@@ -1,47 +1,23 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Spiral, type SpiralProps } from "@paper-design/shaders-react";
 import { asset } from "@/lib/asset";
 import BgmPlayer, { type BgmHandle } from "@/components/BgmPlayer";
-import {
-  GUESTBOOK_LIMITS,
-  addGuestbookEntry,
-  isCounterEnabled,
-  isGuestbookEnabled,
-  recordVisit,
-  subscribeGuestbook,
-  type RemoteEntry,
-  type VisitCounts
-} from "@/lib/firebase";
-import {
-  boardPosts,
-  episodes,
-  guestbook,
-  photos,
-  profile,
-  profileSections,
-  waveLinks
-} from "@/config/linktree";
+import { isCounterEnabled, recordVisit, type VisitCounts } from "@/lib/firebase";
+import { boardPosts, profile, waveLinks } from "@/config/linktree";
+import { departments, notices, type Department, type Duty } from "@/config/departments";
 import { theme } from "@/config/theme";
 
-const ALL_TABS = ["home", "profile", "story", "board", "photo"] as const;
-type TabName = (typeof ALL_TABS)[number];
+/* 탭은 "홈(교무실)" 하나와 부서 하나씩입니다. 부서를 늘리려면 departments.ts 만 고치면 됩니다. */
+const HOME_TAB = "home";
+type TabName = string;
 
-/* 연재물이나 사진이 하나도 없으면 탭 자체를 숨깁니다. */
-const TABS: TabName[] = ALL_TABS.filter(tab => {
-  if (tab === "story") return episodes.length > 0;
-  if (tab === "photo") return photos.length > 0;
-  return true;
-});
+const TABS: TabName[] = [HOME_TAB, ...departments.map(d => d.id)];
 
-/* 탭 버튼과 오른쪽 위 제목에 쓰는 이름표입니다. profile.ts 값을 따릅니다. */
-const NAV_LABELS: Record<TabName, string> = {
-  home: "홈",
-  profile: "프로필",
-  story: profile.storyLabel,
-  board: profile.boardLabel,
-  photo: profile.photoLabel
+const NAV_LABELS: Record<string, string> = {
+  [HOME_TAB]: "교무실",
+  ...Object.fromEntries(departments.map(d => [d.id, d.name]))
 };
 
 /* 진입 화면 셰이더 배경 설정입니다. 색은 theme.ts 를 따릅니다. */
@@ -94,21 +70,13 @@ function IntroOverlay({ onBrowse }: { onBrowse: () => void }) {
         <span className="lt-intro-title">{profile.introTitle}</span>
         <p className="lt-intro-copy">{profile.introDescription}</p>
         <button type="button" className="lt-intro-cta" onClick={onBrowse}>
-          모든 활동 구경하기
+          부서별 업무 보기
           <ChevronDown size={18} />
         </button>
       </div>
     </div>
   );
 }
-
-const TAB_TITLES: Record<TabName, string> = {
-  home: profile.catalogTitle,
-  profile: "프로필",
-  story: profile.storyLabel,
-  board: profile.boardLabel,
-  photo: profile.photoLabel
-};
 
 function SectionTitle({ title, sub }: { title: string; sub?: string }) {
   return (
@@ -119,113 +87,98 @@ function SectionTitle({ title, sub }: { title: string; sub?: string }) {
   );
 }
 
-function HomeTab() {
-  return (
-    <>
-      <div className="cy-content-box cy-miniroom-box">
-        <SectionTitle title="Mini Room" sub="미니룸" />
-        <div className="cy-miniroom-inner">
-          <img src={asset(profile.miniroom.src)} alt={profile.miniroom.alt} />
-        </div>
-      </div>
+/* ------------------------------------- */
+/* 공지 (홈 = 교무실 화면)                 */
+/* ------------------------------------- */
 
-      <div className="cy-content-box">
-        <SectionTitle title="What friends say" sub="한마디로 표현한다면~" />
-        <GuestbookList />
-      </div>
-    </>
-  );
+/* "2026-09-08" 을 현지 자정 기준 날짜로 읽습니다. new Date("...") 는 UTC 로 읽혀 하루가 밀립니다. */
+function parseDue(due: string) {
+  const [y, m, d] = due.split("-").map(Number);
+  return new Date(y, (m || 1) - 1, d || 1);
 }
 
-function ProfileTab() {
-  return (
-    <>
-      {profileSections.map(section => (
-        <div key={section.id} className="cy-content-box">
-          <SectionTitle title={section.title} sub={section.subtitle} />
-          {section.blocks.map((block, bi) => {
-            if (block.kind === "text") {
-              return (
-                <div key={bi} className="cy-text-block">
-                  {block.lines.map((line, i) => (
-                    <p key={i}>{line}</p>
-                  ))}
-                </div>
-              );
-            }
-            if (block.kind === "list") {
-              return (
-                <div key={bi} className="cy-profile-list-box">
-                  <div className="cy-profile-list-heading">{block.heading}</div>
-                  <ul className="cy-profile-list">
-                    {block.items.map((item, i) => (
-                      <li key={i}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
-              );
-            }
-            return (
-              <ul key={bi} className="cy-contact-list">
-                {block.items.map(item => (
-                  <li key={item.href}>
-                    <span className="cy-contact-label">{item.label}</span>
-                    <a
-                      href={item.href}
-                      target={item.href.startsWith("mailto:") ? undefined : "_blank"}
-                      rel="noopener noreferrer"
-                    >
-                      {item.value}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            );
-          })}
-        </div>
-      ))}
-    </>
-  );
+function startOfToday() {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
 }
 
-function StoryTab() {
-  const [openId, setOpenId] = useState<string | null>(null);
-  const open = episodes.find(e => e.id === openId);
+function daysLeft(due: string) {
+  const diff = parseDue(due).getTime() - startOfToday().getTime();
+  return Math.round(diff / 86_400_000);
+}
 
-  if (open) {
-    return (
-      <div className="cy-content-box">
-        <SectionTitle
-          title={open.title ? `${open.label} ${open.title}` : open.label}
-          sub={`${open.cuts.length}컷`}
-        />
-        <button className="cy-back-btn" onClick={() => setOpenId(null)}>
-          목록으로
-        </button>
-        <div className="cy-cut-list">
-          {open.cuts.map((cut, i) => (
-            <img key={cut} src={asset(cut)} alt={`${open.label} ${i + 1}컷`} loading="lazy" />
-          ))}
-        </div>
-      </div>
-    );
-  }
+function dueLabel(due: string) {
+  const date = parseDue(due);
+  return `${date.getMonth() + 1}월 ${date.getDate()}일`;
+}
+
+function leftLabel(left: number) {
+  if (left < 0) return `${-left}일 지남`;
+  if (left === 0) return "오늘까지";
+  if (left === 1) return "내일까지";
+  return `${left}일 남음`;
+}
+
+function NoticeBoard() {
+  /* 마감이 빠른 것부터 보여 줍니다. 이미 지난 것은 뒤로 내리되 지우지는 않습니다. */
+  const sorted = useMemo(() => {
+    return [...notices].sort((a, b) => a.due.localeCompare(b.due));
+  }, []);
+
+  const upcoming = sorted.filter(n => daysLeft(n.due) >= 0);
+  const overdue = sorted.filter(n => daysLeft(n.due) < 0);
+  const list = [...upcoming, ...overdue];
 
   return (
     <div className="cy-content-box">
-      <SectionTitle title={profile.storyLabel} sub={`전체 ${episodes.length}화`} />
-      <ul className="cy-episode-grid">
-        {episodes.map(episode => (
-          <li key={episode.id}>
-            <button className="cy-episode-card" onClick={() => setOpenId(episode.id)}>
-              <span className="cy-episode-thumb">
-                <img src={asset(episode.thumb)} alt={episode.label} loading="lazy" />
+      <SectionTitle title="교무실 공지" sub="언제까지 무엇을" />
+      {list.length === 0 ? (
+        <div className="cy-empty-box">등록된 공지가 없습니다.</div>
+      ) : (
+        <ul className="cy-notice-list">
+          {list.map(notice => {
+            const left = daysLeft(notice.due);
+            const state = left < 0 ? "is-over" : left <= 3 ? "is-soon" : "";
+            return (
+              <li key={notice.id} className={`cy-notice-item ${state}`}>
+                <span className="cy-notice-due">
+                  <span className="cy-notice-date">{dueLabel(notice.due)}</span>
+                  <span className="cy-notice-left">{leftLabel(left)}</span>
+                </span>
+                <span className="cy-notice-body">
+                  <span className="cy-notice-head">
+                    <span className="cy-notice-dept">{notice.dept}</span>
+                    <span className="cy-notice-title">{notice.title}</span>
+                  </span>
+                  {notice.detail ? <span className="cy-notice-detail">{notice.detail}</span> : null}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+function CommonLinks() {
+  if (boardPosts.length === 0) return null;
+  return (
+    <div className="cy-content-box">
+      <SectionTitle title={profile.boardLabel} sub={profile.boardSubtitle} />
+      <ul className="cy-board-list">
+        {boardPosts.map(post => (
+          <li key={post.id} className="cy-board-item">
+            <a className="cy-board-link" href={post.href} target="_blank" rel="noopener noreferrer">
+              <span className="cy-board-text">
+                <span className="cy-board-head">
+                  <span className="cy-board-category">{post.category}</span>
+                  <span className="cy-board-title">{post.title}</span>
+                </span>
+                {post.summary ? <span className="cy-board-summary">{post.summary}</span> : null}
+                <span className="cy-board-date">{post.date}</span>
               </span>
-              <span className="cy-episode-label">{episode.label}</span>
-              {episode.title ? (
-                <span className="cy-episode-title">{episode.title}</span>
-              ) : null}
-            </button>
+            </a>
           </li>
         ))}
       </ul>
@@ -233,156 +186,119 @@ function StoryTab() {
   );
 }
 
-function BoardTab() {
+function HomeTab() {
+  return (
+    <>
+      <NoticeBoard />
+
+      <div className="cy-content-box cy-miniroom-box">
+        <SectionTitle title="교무실" sub="부서 탭에서 업무분장을 찾으세요" />
+        <div className="cy-miniroom-inner">
+          <img src={asset(profile.miniroom.src)} alt={profile.miniroom.alt} />
+        </div>
+      </div>
+
+      <CommonLinks />
+    </>
+  );
+}
+
+/* ------------------------------------- */
+/* 부서 탭                                */
+/* ------------------------------------- */
+
+function DutyDetail({ duty, onBack }: { duty: Duty; onBack: () => void }) {
   return (
     <div className="cy-content-box">
-      <SectionTitle title={profile.boardLabel} sub={profile.boardSubtitle} />
-      {boardPosts.length === 0 ? (
-        <div className="cy-empty-box">
-          {profile.boardEmptyText}
+      <SectionTitle title={duty.title} sub={duty.owner} />
+      <button className="cy-back-btn" onClick={onBack}>
+        업무분장 목록으로
+      </button>
+
+      <div className="cy-duty-summary">{duty.summary}</div>
+
+      <div className="cy-duty-block">
+        <div className="cy-duty-heading">반복되는 업무</div>
+        <ul className="cy-routine-list">
+          {duty.routines.map((routine, i) => (
+            <li key={i} className="cy-routine-item">
+              <span className="cy-routine-cycle">{routine.cycle}</span>
+              <span className="cy-routine-what">{routine.what}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {duty.howto && duty.howto.length > 0 ? (
+        <div className="cy-duty-block">
+          <div className="cy-duty-heading">처리 절차</div>
+          <ol className="cy-duty-steps">
+            {duty.howto.map((step, i) => (
+              <li key={i}>{step}</li>
+            ))}
+          </ol>
         </div>
+      ) : null}
+
+      {duty.notes && duty.notes.length > 0 ? (
+        <div className="cy-duty-block">
+          <div className="cy-duty-heading">인수인계 메모</div>
+          <ul className="cy-duty-notes">
+            {duty.notes.map((note, i) => (
+              <li key={i}>{note}</li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      {duty.links && duty.links.length > 0 ? (
+        <div className="cy-duty-block">
+          <div className="cy-duty-heading">관련 링크</div>
+          <ul className="cy-duty-links">
+            {duty.links.map(link => (
+              <li key={link.href}>
+                <a href={link.href} target="_blank" rel="noopener noreferrer">
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function DeptTab({ dept }: { dept: Department }) {
+  const [openId, setOpenId] = useState<string | null>(null);
+  const open = dept.duties.find(d => d.id === openId);
+
+  if (open) {
+    return <DutyDetail duty={open} onBack={() => setOpenId(null)} />;
+  }
+
+  return (
+    <div className="cy-content-box">
+      <SectionTitle title={dept.name} sub={dept.subtitle ?? `업무분장 ${dept.duties.length}건`} />
+      {dept.duties.length === 0 ? (
+        <div className="cy-empty-box">아직 등록된 업무분장이 없습니다.</div>
       ) : (
-        <ul className="cy-board-list">
-          {boardPosts.map(post => (
-            <li key={post.id} className="cy-board-item">
-              <a className="cy-board-link" href={post.href} target="_blank" rel="noopener noreferrer">
-                {post.preview ? (
-                  <span className="cy-board-preview">
-                    <img src={asset(post.preview.src)} alt={post.preview.alt} loading="lazy" />
-                  </span>
-                ) : null}
-                <span className="cy-board-text">
-                  <span className="cy-board-head">
-                    <span className="cy-board-category">{post.category}</span>
-                    <span className="cy-board-title">{post.title}</span>
-                  </span>
-                  {post.summary ? <span className="cy-board-summary">{post.summary}</span> : null}
-                  <span className="cy-board-date">{post.date}</span>
+        <ul className="cy-duty-list">
+          {dept.duties.map(duty => (
+            <li key={duty.id} className="cy-duty-item">
+              <button type="button" className="cy-duty-btn" onClick={() => setOpenId(duty.id)}>
+                <span className="cy-duty-head">
+                  <span className="cy-duty-title">{duty.title}</span>
+                  {duty.owner ? <span className="cy-duty-owner">{duty.owner}</span> : null}
                 </span>
-              </a>
+                <span className="cy-duty-sum">{duty.summary}</span>
+                <span className="cy-duty-meta">반복 업무 {duty.routines.length}건</span>
+              </button>
             </li>
           ))}
         </ul>
       )}
     </div>
-  );
-}
-
-function GuestbookForm() {
-  const [author, setAuthor] = useState("");
-  const [text, setText] = useState("");
-  const [sending, setSending] = useState(false);
-  const [message, setMessage] = useState<{ kind: "ok" | "error"; text: string } | null>(null);
-
-  const submit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    if (sending) return;
-    setSending(true);
-    setMessage(null);
-    try {
-      await addGuestbookEntry(author, text);
-      setAuthor("");
-      setText("");
-      setMessage({ kind: "ok", text: "한줄평을 남겼어요. 고맙습니다!" });
-    } catch (error) {
-      setMessage({ kind: "error", text: error instanceof Error ? error.message : "남기지 못했어요. 잠시 뒤 다시 시도해 주세요." });
-    } finally {
-      setSending(false);
-    }
-  };
-
-  return (
-    <form className="cy-guestbook-form" onSubmit={submit}>
-      <input
-        className="cy-gb-author"
-        value={author}
-        onChange={e => setAuthor(e.target.value)}
-        placeholder="이름"
-        maxLength={GUESTBOOK_LIMITS.author}
-        aria-label="이름"
-      />
-      <input
-        className="cy-gb-text"
-        value={text}
-        onChange={e => setText(e.target.value)}
-        placeholder="한줄평을 남겨주세요"
-        maxLength={GUESTBOOK_LIMITS.text}
-        aria-label="한줄평"
-      />
-      <button className="cy-gb-submit" type="submit" disabled={sending}>
-        {sending ? "전송중" : "남기기"}
-      </button>
-      {message ? (
-        <span className={`cy-gb-message${message.kind === "error" ? " is-error" : ""}`}>{message.text}</span>
-      ) : null}
-    </form>
-  );
-}
-
-const GUESTBOOK_FETCH_LIMIT = 30;
-const GUESTBOOK_PAGE_SIZE = 5;
-
-function GuestbookList() {
-  /* Firestore 가 설정되어 있으면 실시간 목록을, 아니면 linktree.ts 의 예시를 보여줍니다. */
-  const [remote, setRemote] = useState<RemoteEntry[] | null>(null);
-  const [failed, setFailed] = useState(false);
-  const [page, setPage] = useState(0);
-
-  useEffect(() => {
-    if (!isGuestbookEnabled) return;
-    return subscribeGuestbook(GUESTBOOK_FETCH_LIMIT, setRemote, () => setFailed(true));
-  }, []);
-
-  const live = isGuestbookEnabled && !failed;
-  const entries = live && remote
-    ? remote.map(e => ({ key: e.id, ...e }))
-    : guestbook.map(e => ({ key: String(e.id), ...e }));
-
-  const pageCount = Math.max(1, Math.ceil(entries.length / GUESTBOOK_PAGE_SIZE));
-  const currentPage = Math.min(page, pageCount - 1);
-  const pageEntries = entries.slice(
-    currentPage * GUESTBOOK_PAGE_SIZE,
-    currentPage * GUESTBOOK_PAGE_SIZE + GUESTBOOK_PAGE_SIZE
-  );
-
-  return (
-    <>
-      {live && remote === null ? <div className="cy-gb-loading">한줄평을 불러오는 중…</div> : null}
-
-      <div className="cy-guestbook-list">
-        {entries.length === 0 ? (
-          <div className="cy-gb-loading">아직 한줄평이 없어요. 첫 줄을 남겨 주세요!</div>
-        ) : (
-          pageEntries.map(c => (
-            <div key={c.key} className="cy-guestbook-item">
-              <span className="cg-author">
-                {c.author} <span className="cg-colon">:</span>{" "}
-              </span>
-              <span className="cg-text">{c.text}</span>
-              <span className="cg-date">({c.date})</span>
-            </div>
-          ))
-        )}
-      </div>
-
-      {pageCount > 1 ? (
-        <div className="cy-gb-pagination">
-          {Array.from({ length: pageCount }, (_, i) => (
-            <button
-              key={i}
-              type="button"
-              className={`cy-gb-page${i === currentPage ? " is-active" : ""}`}
-              onClick={() => setPage(i)}
-              aria-current={i === currentPage ? "page" : undefined}
-            >
-              {i + 1}
-            </button>
-          ))}
-        </div>
-      ) : null}
-
-      {live ? <GuestbookForm /> : null}
-    </>
   );
 }
 
@@ -413,29 +329,15 @@ function VisitCounter() {
   );
 }
 
-function PhotoTab() {
-  return (
-    <div className="cy-content-box">
-      <SectionTitle title={profile.photoLabel} sub={`${profile.photoSubtitlePrefix} ${photos.length}컷`} />
-      <ul className="cy-photo-grid">
-        {photos.map(photo => (
-          <li key={photo.id} className="cy-photo-item">
-            <div className="cy-photo-frame">
-              <img src={asset(photo.src)} alt={photo.name} loading="lazy" />
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
 export default function LinkTree() {
-  const [activeTab, setActiveTab] = useState<TabName>("home");
+  const [activeTab, setActiveTab] = useState<TabName>(HOME_TAB);
   const [introSkipped, setIntroSkipped] = useState(false);
   const bgmRef = useRef<BgmHandle>(null);
 
-  /* ?tab=프로필 처럼 탭 딥링크로 들어오면 진입 화면을 건너뜁니다.
+  const activeDept = departments.find(d => d.id === activeTab);
+  const rightTitle = activeDept ? activeDept.name : "교무실 공지";
+
+  /* ?tab=affairs 처럼 탭 딥링크로 들어오면 진입 화면을 건너뜁니다.
      정적 배포에서도 동작하도록 브라우저에서 읽습니다. */
   useEffect(() => {
     const tab = new URLSearchParams(window.location.search).get("tab");
@@ -470,6 +372,7 @@ export default function LinkTree() {
           </div>
 
           <div className="cy-book-inner">
+
             {/* 좌측 패널 */}
             <div className="cy-left-panel">
               <div className="cy-left-header">
@@ -498,7 +401,7 @@ export default function LinkTree() {
                     value=""
                     onChange={event => {
                       const target = waveLinks.find(w => w.id === event.target.value);
-                      if (target) {
+                      if (target && target.href) {
                         window.open(target.href, "_blank", "noopener,noreferrer");
                       }
                     }}
@@ -515,16 +418,16 @@ export default function LinkTree() {
             {/* 우측 패널 */}
             <div className="cy-right-panel">
               <div className="cy-right-header">
-                <span className="cy-title">{TAB_TITLES[activeTab]}</span>
+                <span className="cy-title">{rightTitle}</span>
                 <span className="cy-url">{profile.displayUrl}</span>
               </div>
 
               <div className="cy-right-content">
-                {activeTab === "home" && <HomeTab />}
-                {activeTab === "profile" && <ProfileTab />}
-                {activeTab === "story" && <StoryTab />}
-                {activeTab === "board" && <BoardTab />}
-                {activeTab === "photo" && <PhotoTab />}
+                {activeDept ? (
+                  <DeptTab key={activeDept.id} dept={activeDept} />
+                ) : (
+                  <HomeTab />
+                )}
               </div>
             </div>
 

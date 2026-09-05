@@ -123,7 +123,7 @@ body.lt-intro-open {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(to bottom, #d4f0d4, #b2dbb2 50%, #8ac08a); /* 초록 파스텔 톤 */
+  background: linear-gradient(to bottom, #dceaf5, #bcd6e8 50%, #7FA8C9); /* 교무실 블루 톤 */
   padding: 2rem;
 }
 
@@ -182,7 +182,7 @@ body.lt-intro-open {
   display: flex;
   width: 100%;
   height: 100%;
-  border: 2px dashed #9cbba6;
+  border: 2px dashed #9DBCD4;
   border-radius: 8px;
   background: white;
   position: relative;
@@ -246,7 +246,7 @@ body.lt-intro-open {
   height: 100%;
   object-fit: contain;
   padding: 6px;
-  background: #f4f7f4;
+  background: #EEF4F9;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
@@ -469,7 +469,7 @@ body.lt-intro-open {
 .cy-title {
   font-size: 1.1rem;
   font-weight: 900;
-  color: #4CA771; /* 파스텔 초록 포인트 */
+  color: #2F6690; /* 교무실 블루 포인트 */
 }
 
 .cy-url {
@@ -530,7 +530,7 @@ body.lt-intro-open {
 
 /* 미니룸 박스 */
 .cy-miniroom-inner {
-  background: #f4f7f4; /* 옅은 민트색 배경 */
+  background: #EEF4F9; /* 옅은 하늘색 배경 */
   border: 1px solid #e0e0e0;
   border-radius: 4px;
   display: flex;
@@ -545,7 +545,7 @@ body.lt-intro-open {
 }
 .cy-miniroom-welcome {
   font-size: 0.9rem;
-  color: #547A60;
+  color: #2F6690;
   font-weight: bold;
 }
 
@@ -594,7 +594,7 @@ body.lt-intro-open {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #9CBBA6;
+  background: #9DBCD4;
 }
 
 .cy-contact-list {
@@ -612,7 +612,7 @@ body.lt-intro-open {
   margin-right: 6px;
 }
 .cy-contact-list a {
-  color: #547A60;
+  color: #2F6690;
   text-decoration: none;
 }
 .cy-contact-list a:hover {
@@ -644,7 +644,7 @@ body.lt-intro-open {
 .cy-episode-thumb {
   width: 100%;
   aspect-ratio: 1 / 1;
-  background: #f4f7f4;
+  background: #EEF4F9;
   border: 1px solid #e0e0e0;
   border-radius: 4px;
   overflow: hidden;
@@ -677,9 +677,9 @@ body.lt-intro-open {
 
 /* 회차 보기 */
 .cy-back-btn {
-  background: #9CBBA6;
+  background: #9DBCD4;
   color: #fff;
-  border: 1px solid #779683;
+  border: 1px solid #6E93B4;
   border-radius: 4px;
   padding: 5px 12px;
   font-size: 0.75rem;
@@ -688,7 +688,7 @@ body.lt-intro-open {
   margin-bottom: 12px;
 }
 .cy-back-btn:hover {
-  background: #8ac08a;
+  background: #7FA8C9;
 }
 .cy-cut-list {
   display: flex;
@@ -724,7 +724,7 @@ body.lt-intro-open {
   font-family: "Tahoma", sans-serif;
   font-size: 0.7rem;
   font-weight: bold;
-  color: #547A60;
+  color: #2F6690;
   background: #eef4ef;
   border-radius: 3px;
   padding: 3px 6px;
@@ -799,7 +799,7 @@ body.lt-intro-open {
 .cy-board-category {
   font-size: 0.68rem;
   color: #fff;
-  background: #9CBBA6;
+  background: #9DBCD4;
   border-radius: 3px;
   padding: 2px 6px;
   flex-shrink: 0;
@@ -903,13 +903,13 @@ body.lt-intro-open {
 }
 
 .cy-gb-page:hover {
-  border-color: #9CBBA6;
-  color: #547A60;
+  border-color: #9DBCD4;
+  color: #2F6690;
 }
 
 .cy-gb-page.is-active {
-  background: #9CBBA6;
-  border-color: #779683;
+  background: #9DBCD4;
+  border-color: #6E93B4;
   color: #fff;
 }
 
@@ -953,7 +953,7 @@ body.lt-intro-open {
 .cy-gb-author:focus,
 .cy-gb-text:focus {
   outline: none;
-  border-color: #9CBBA6;
+  border-color: #9DBCD4;
 }
 
 .cy-gb-submit {
@@ -962,15 +962,15 @@ body.lt-intro-open {
   font-size: 0.75rem;
   font-weight: bold;
   padding: 5px 12px;
-  border: 1px solid #779683;
+  border: 1px solid #6E93B4;
   border-radius: 3px;
-  background: #9CBBA6;
+  background: #9DBCD4;
   color: #fff;
   cursor: pointer;
 }
 
 .cy-gb-submit:hover:not(:disabled) {
-  background: #8ac08a;
+  background: #7FA8C9;
 }
 
 .cy-gb-submit:disabled {
@@ -982,7 +982,7 @@ body.lt-intro-open {
 .cy-gb-message {
   flex-basis: 100%;
   font-size: 0.72rem;
-  color: #547A60;
+  color: #2F6690;
 }
 
 .cy-gb-message.is-error {
@@ -995,22 +995,22 @@ body.lt-intro-open {
 /* ------------------------------------- */
 .cy-tabs {
   position: absolute;
-  right: -62px; /* 책 바깥으로 튀어나옴 */
-  top: 40px;
+  right: -82px; /* 책 바깥으로 튀어나옴 */
+  top: 24px;
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
 .cy-tab-btn {
-  background: #9CBBA6; /* 기본 탭 초록색 */
+  background: #9DBCD4; /* 기본 탭 블루색 */
   color: white;
-  border: 1px solid #779683;
+  border: 1px solid #6E93B4;
   border-left: none; /* 책에 붙은 느낌 */
   border-radius: 0 6px 6px 0;
-  padding: 6px 4px;
-  width: 62px;
-  min-height: 40px;
+  padding: 6px 5px;
+  width: 82px;
+  min-height: 38px;
   font-size: 0.72rem;
   line-height: 1.25;
   font-family: "Dotum", sans-serif;
@@ -1025,19 +1025,20 @@ body.lt-intro-open {
 
 .cy-tab-line {
   display: block;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: keep-all;
 }
 
 .cy-tab-btn:hover {
-  width: 68px;
-  background: #8ac08a;
+  width: 88px;
+  background: #7FA8C9;
 }
 
 .cy-tab-btn.active {
   background: white;
   color: #333;
-  border-color: #9cbba6;
-  width: 72px;
+  border-color: #9DBCD4;
+  width: 92px;
   font-weight: bold;
   z-index: 10;
 }
@@ -1050,7 +1051,7 @@ body.lt-intro-open {
 @media (max-width: 1180px) and (min-width: 901px) {
   .cy-root {
     justify-content: flex-start;
-    padding: 2rem 5rem 2rem 2rem;
+    padding: 2rem 7rem 2rem 2rem;
     overflow-x: auto;
   }
 }
@@ -1142,7 +1143,7 @@ body.lt-intro-open {
     min-width: 58px;
     min-height: 34px;
     padding: 6px 8px;
-    border: 1px solid #779683;
+    border: 1px solid #6E93B4;
     border-radius: 6px 6px 0 0;
   }
 
@@ -1184,5 +1185,282 @@ body.lt-intro-open {
   .cy-tab-btn {
     font-size: 0.68rem;
     min-width: 52px;
+  }
+}
+
+/* ------------------------------------- */
+/* 교무실 공지 (홈)                        */
+/* ------------------------------------- */
+.cy-notice-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cy-notice-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 9px 10px;
+  border: 1px solid #e3e9ef;
+  border-left: 4px solid #9DBCD4;
+  border-radius: 4px;
+  background: #fbfdff;
+}
+
+.cy-notice-item.is-soon {
+  border-left-color: #E4A11B;
+  background: #fffaf0;
+}
+
+.cy-notice-item.is-over {
+  border-left-color: #cfd6dd;
+  background: #fafafa;
+  opacity: 0.72;
+}
+
+.cy-notice-due {
+  flex: 0 0 74px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.cy-notice-date {
+  font-size: 0.82rem;
+  font-weight: bold;
+  color: #26364A;
+}
+
+.cy-notice-left {
+  font-size: 0.68rem;
+  color: #7B8FA6;
+}
+
+.cy-notice-item.is-soon .cy-notice-left {
+  color: #B67A0A;
+  font-weight: bold;
+}
+
+.cy-notice-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.cy-notice-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.cy-notice-dept {
+  font-size: 0.66rem;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: #E3EEF7;
+  color: #2F6690;
+  white-space: nowrap;
+}
+
+.cy-notice-title {
+  font-size: 0.84rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.cy-notice-detail {
+  font-size: 0.75rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* ------------------------------------- */
+/* 부서 탭 - 업무분장 목록                 */
+/* ------------------------------------- */
+.cy-duty-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cy-duty-btn {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid #e3e9ef;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.cy-duty-btn:hover {
+  border-color: #9DBCD4;
+  background: #f7fbfe;
+}
+
+.cy-duty-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.cy-duty-title {
+  font-size: 0.88rem;
+  font-weight: bold;
+  color: #26364A;
+}
+
+.cy-duty-owner {
+  font-size: 0.66rem;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: #EEF4F9;
+  color: #2F6690;
+}
+
+.cy-duty-sum {
+  font-size: 0.76rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+.cy-duty-meta {
+  font-size: 0.68rem;
+  color: #9aa7b4;
+}
+
+/* ------------------------------------- */
+/* 부서 탭 - 업무분장 상세                 */
+/* ------------------------------------- */
+.cy-duty-summary {
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: #444;
+  padding: 10px 12px;
+  background: #EEF4F9;
+  border-radius: 4px;
+}
+
+.cy-duty-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cy-duty-heading {
+  font-size: 0.78rem;
+  font-weight: bold;
+  color: #2F6690;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #e3e9ef;
+}
+
+.cy-routine-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cy-routine-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.cy-routine-cycle {
+  flex: 0 0 108px;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: #E3EEF7;
+  color: #2F6690;
+  text-align: center;
+  word-break: keep-all;
+}
+
+.cy-routine-what {
+  flex: 1;
+  color: #444;
+}
+
+.cy-duty-steps {
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: #444;
+}
+
+.cy-duty-notes {
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: #7a5a2a;
+}
+
+.cy-duty-links {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.cy-duty-links a {
+  display: inline-block;
+  font-size: 0.74rem;
+  padding: 4px 10px;
+  border: 1px solid #9DBCD4;
+  border-radius: 999px;
+  color: #2F6690;
+  text-decoration: none;
+  background: white;
+}
+
+.cy-duty-links a:hover {
+  background: #E3EEF7;
+}
+
+/* 모바일에서는 공지 날짜와 반복 주기를 위로 올립니다. */
+@media (max-width: 900px) {
+  .cy-notice-item {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .cy-notice-due {
+    flex: 0 0 auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .cy-routine-item {
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .cy-routine-cycle {
+    flex: 0 0 auto;
+    align-self: flex-start;
   }
 }

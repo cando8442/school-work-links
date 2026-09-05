@@ -1,18 +1,18 @@
 export const profile = {
-  teacherName: "우리학교 업무 링크",
-  title: "우리학교 업무 링크",
-  introTitle: "우리학교 업무 링크",
-  introDescription: "교무실에서 자주 쓰는 업무 사이트를 한 곳에 모았습니다. 필요한 곳을 눌러 바로 이동하세요.",
-  catalogTitle: "업무 링크",
-  catalogDescription: "교무업무 바로가기",
+  teacherName: "우리학교 부별공유",
+  title: "우리학교 부별공유",
+  introTitle: "우리학교 부별공유",
+  introDescription: "부서 탭에서 업무분장을 열면 반복 업무와 처리 절차가 나옵니다. 마감이 있는 일은 교무실 공지에 있습니다.",
+  catalogTitle: "교무실 공지",
+  catalogDescription: "부별공유 · 업무분장",
   /* 왼쪽 프로필 사진입니다. public/assets/ 안에 파일을 넣고 경로를 적으세요. */
   photo: { src: "/assets/profile.svg", alt: "학교 배지 그림" },
   /* 홈 탭 위쪽 미니룸 이미지입니다. public/assets/ 안에 파일을 넣고 경로를 적으세요. */
   miniroom: { src: "/assets/miniroom.svg", alt: "교무실 책상 그림" },
   /* 아래는 탭 이름표입니다. 나만의 이름으로 바꿔도 되고, 안 바꾸면 기본값 그대로 나옵니다. */
   storyLabel: "연재물",
-  boardLabel: "업무 링크",
-  boardSubtitle: "자주 쓰는 업무 사이트",
+  boardLabel: "공용 링크",
+  boardSubtitle: "부서 공통으로 쓰는 사이트",
   boardEmptyText: "아직 등록한 링크가 없습니다.",
   photoLabel: "사진첩",
   photoSubtitlePrefix: "사진",
