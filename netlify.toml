@@ -1,0 +1,14 @@
+[build]
+  command = "npm run build"
+  publish = "out"
+
+[build.environment]
+  # 넷리파이는 루트 주소로 서비스하므로 하위 경로를 비웁니다.
+  NEXT_PUBLIC_BASE_PATH = ""
+  NODE_VERSION = "20"
+
+# 주소를 직접 친 하위 경로도 화면을 찾을 수 있게 합니다.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

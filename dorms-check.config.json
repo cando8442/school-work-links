@@ -1,0 +1,16 @@
+{
+  "app": {
+    "name": "우리학교 부별공유",
+    "url": "https://cando8442.github.io/school-work-links/",
+    "stack": "Next.js"
+  },
+  "tracks": [
+    "security",
+    "edzip"
+  ],
+  "edzipCase": "A",
+  "teacher": {
+    "dormsHandle": ""
+  },
+  "ownershipConfirmed": true
+}

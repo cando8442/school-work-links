@@ -1,0 +1,436 @@
+{
+  "at": "2026-09-06T06:35:44.191Z",
+  "url": "https://cando8442.github.io/school-work-links/",
+  "results": [
+    {
+      "id": "sec.header.csp",
+      "status": "fail",
+      "observed": "누락: content-security-policy (missing)",
+      "evidence": {
+        "header": "content-security-policy",
+        "value": null,
+        "validation": "missing",
+        "observedAt": "2026-09-06T06:35:36.389Z"
+      }
+    },
+    {
+      "id": "sec.header.hsts",
+      "status": "pass",
+      "observed": "strict-transport-security: max-age=31556952",
+      "evidence": {
+        "header": "strict-transport-security",
+        "value": "max-age=31556952",
+        "validation": "valid",
+        "observedAt": "2026-09-06T06:35:36.390Z"
+      }
+    },
+    {
+      "id": "sec.header.frame",
+      "status": "fail",
+      "observed": "누락: x-frame-options (frame protection is missing)",
+      "evidence": {
+        "header": "x-frame-options",
+        "value": null,
+        "validation": "frame protection is missing",
+        "observedAt": "2026-09-06T06:35:36.390Z"
+      }
+    },
+    {
+      "id": "sec.header.nosniff",
+      "status": "fail",
+      "observed": "누락: x-content-type-options (missing)",
+      "evidence": {
+        "header": "x-content-type-options",
+        "value": null,
+        "validation": "missing",
+        "observedAt": "2026-09-06T06:35:36.390Z"
+      }
+    },
+    {
+      "id": "sec.header.referrer",
+      "status": "fail",
+      "observed": "누락: referrer-policy (missing)",
+      "evidence": {
+        "header": "referrer-policy",
+        "value": null,
+        "validation": "missing",
+        "observedAt": "2026-09-06T06:35:36.390Z"
+      }
+    },
+    {
+      "id": "sec.header.permissions",
+      "status": "fail",
+      "observed": "누락: permissions-policy (missing)",
+      "evidence": {
+        "header": "permissions-policy",
+        "value": null,
+        "validation": "missing",
+        "observedAt": "2026-09-06T06:35:36.390Z"
+      }
+    },
+    {
+      "id": "sec.fingerprint.powered-by",
+      "status": "pass",
+      "observed": "x-powered-by 미노출(양호)",
+      "evidence": {
+        "poweredBy": null,
+        "server": "GitHub.com"
+      }
+    },
+    {
+      "id": "sec.transport.https-redirect",
+      "status": "fail",
+      "observed": "HTTP 요청이 HTTPS로 강제되지 않음 (HTTP 404)",
+      "evidence": {
+        "httpProbe": "HTTP 404",
+        "redirectsHttps": false
+      }
+    },
+    {
+      "id": "sec.transport.ssl-valid",
+      "status": "pass",
+      "observed": "TLS 연결 성공 (TLSv1.3)",
+      "evidence": {
+        "protocol": "TLSv1.3",
+        "authorized": true,
+        "authError": null,
+        "validFrom": "Aug  2 23:38:02 2026 GMT",
+        "validTo": "Oct 31 23:38:01 2026 GMT"
+      }
+    },
+    {
+      "id": "sec.transport.old-tls",
+      "status": "pass",
+      "observed": "TLS 버전 양호: TLSv1.3",
+      "evidence": {
+        "protocol": "TLSv1.3"
+      }
+    },
+    {
+      "id": "sec.transport.cookie-flags",
+      "status": "na",
+      "observed": "응답에 쿠키 없음",
+      "evidence": {}
+    },
+    {
+      "id": "info.secret-exposed",
+      "status": "pass",
+      "observed": "민감 파일(.env/.git) 노출 없음",
+      "evidence": {
+        "probed": [
+          {
+            "path": "/.env",
+            "httpStatus": 404,
+            "exposed": false
+          },
+          {
+            "path": "/.env.local",
+            "httpStatus": 404,
+            "exposed": false
+          },
+          {
+            "path": "/.env.production",
+            "httpStatus": 404,
+            "exposed": false
+          },
+          {
+            "path": "/.git/config",
+            "httpStatus": 404,
+            "exposed": false
+          },
+          {
+            "path": "/.git/HEAD",
+            "httpStatus": 404,
+            "exposed": false
+          }
+        ],
+        "exposedPaths": []
+      }
+    },
+    {
+      "id": "info.config-exposed",
+      "status": "pass",
+      "observed": "설정 파일 비노출",
+      "evidence": {
+        "exposed": []
+      }
+    },
+    {
+      "id": "info.source-map",
+      "status": "pass",
+      "observed": "소스맵 참조 없음",
+      "evidence": {
+        "sourceMappingURL": false
+      }
+    },
+    {
+      "id": "info.stack-trace",
+      "status": "pass",
+      "observed": "스택트레이스 노출 없음",
+      "evidence": {
+        "stackTrace": false
+      }
+    },
+    {
+      "id": "info.mixed-content",
+      "status": "pass",
+      "observed": "mixed content 없음",
+      "evidence": {
+        "mixedContent": false
+      }
+    },
+    {
+      "id": "cors.policy",
+      "status": "info",
+      "observed": "와일드카드(*) 허용 — 공개 API면 무방, 인증 API면 위험",
+      "evidence": {
+        "allowOrigin": "*",
+        "allowCredentials": false,
+        "reflectsOrigin": false,
+        "wildcard": true
+      }
+    },
+    {
+      "id": "seo.title",
+      "status": "pass",
+      "observed": "<title> 있음",
+      "evidence": {}
+    },
+    {
+      "id": "seo.description",
+      "status": "pass",
+      "observed": "설명 메타",
+      "evidence": {}
+    },
+    {
+      "id": "seo.viewport",
+      "status": "pass",
+      "observed": "viewport 메타",
+      "evidence": {}
+    },
+    {
+      "id": "seo.og",
+      "status": "pass",
+      "observed": "Open Graph 태그",
+      "evidence": {}
+    },
+    {
+      "id": "seo.canonical",
+      "status": "info",
+      "observed": "canonical 링크",
+      "evidence": {}
+    },
+    {
+      "id": "perf.ttfb",
+      "status": "pass",
+      "observed": "응답 시간 384ms",
+      "evidence": {
+        "ms": 384
+      }
+    },
+    {
+      "id": "perf.page-size",
+      "status": "pass",
+      "observed": "문서 크기 9KB",
+      "evidence": {
+        "bytes": 9099
+      }
+    },
+    {
+      "id": "perf.compression",
+      "status": "pass",
+      "observed": "압축: gzip",
+      "evidence": {
+        "encoding": "gzip"
+      }
+    },
+    {
+      "id": "legal.privacy-policy",
+      "status": "fail",
+      "observed": "개인정보처리방침 페이지/링크 없음",
+      "evidence": {
+        "found": false
+      }
+    },
+    {
+      "id": "legal.terms",
+      "status": "info",
+      "observed": "이용약관 페이지/링크 없음",
+      "evidence": {
+        "found": false
+      }
+    },
+    {
+      "id": "legal.contact",
+      "status": "pass",
+      "observed": "연락처/문의 정보 있음",
+      "evidence": {
+        "found": true
+      }
+    },
+    {
+      "id": "code.rls.anon-read",
+      "status": "na",
+      "observed": "Supabase provider not found: 배포된 앱에서 Supabase URL과 anon 키를 찾지 못함",
+      "evidence": {
+        "providerDetected": false,
+        "supabaseUrl": null,
+        "foundJwts": 0
+      }
+    },
+    {
+      "id": "code.firebase.public-read",
+      "status": "na",
+      "observed": "Firebase provider not found: 배포된 앱에서 Realtime Database 주소를 찾지 못함",
+      "evidence": {
+        "providerDetected": false
+      }
+    },
+    {
+      "id": "code.endpoint.unauth",
+      "status": "na",
+      "observed": "앱에서 내부 API 경로를 찾지 못함 — 미인증 호출 프로브 생략",
+      "evidence": {}
+    },
+    {
+      "id": "code.hardcoded-secret",
+      "status": "pass",
+      "observed": "하드코딩 시크릿 미검출",
+      "evidence": {
+        "hits": []
+      }
+    },
+    {
+      "id": "code.client-secret-leak",
+      "status": "pass",
+      "observed": "클라 시크릿 노출 미검출",
+      "evidence": {
+        "hits": []
+      }
+    },
+    {
+      "id": "code.headers-config",
+      "status": "info",
+      "observed": "헤더 설정 파일에서 보안 헤더 설정을 못 찾음(라이브 관측을 우선 신뢰)",
+      "evidence": {
+        "configuredHeaders": {},
+        "filesScanned": [
+          "next.config.ts"
+        ]
+      }
+    },
+    {
+      "id": "code.dangerous-pattern",
+      "status": "info",
+      "observed": "검토가 필요한 위험 패턴 2건(문맥 확인 필요)",
+      "evidence": {
+        "hits": [
+          {
+            "file": "public\\pdf.worker.min.mjs",
+            "line": 21,
+            "kind": "new Function()"
+          },
+          {
+            "file": "public\\pdf.worker.min.mjs",
+            "line": 21,
+            "kind": "child_process exec"
+          }
+        ]
+      }
+    },
+    {
+      "id": "edzip.1-1",
+      "status": "pending",
+      "observed": "아직 판단 안 됨(judge 필요)",
+      "evidence": {}
+    },
+    {
+      "id": "edzip.1-2",
+      "status": "pending",
+      "observed": "아직 판단 안 됨(judge 필요)",
+      "evidence": {}
+    },
+    {
+      "id": "edzip.1-3",
+      "status": "pending",
+      "observed": "아직 판단 안 됨(judge 필요)",
+      "evidence": {}
+    },
+    {
+      "id": "edzip.2-1",
+      "status": "pending",
+      "observed": "아직 판단 안 됨(judge 필요)",
+      "evidence": {}
+    },
+    {
+      "id": "edzip.3-1",
+      "status": "pending",
+      "observed": "아직 판단 안 됨(judge 필요)",
+      "evidence": {}
+    },
+    {
+      "id": "edzip.4-1",
+      "status": "pending",
+      "observed": "아직 판단 안 됨(judge 필요)",
+      "evidence": {}
+    },
+    {
+      "id": "edzip.5-1",
+      "status": "pending",
+      "observed": "아직 판단 안 됨(judge 필요)",
+      "evidence": {}
+    },
+    {
+      "id": "edzip.5-2",
+      "status": "pending",
+      "observed": "아직 판단 안 됨(judge 필요)",
+      "evidence": {}
+    },
+    {
+      "id": "edzip.5-3",
+      "status": "pending",
+      "observed": "아직 판단 안 됨(judge 필요)",
+      "evidence": {}
+    }
+  ],
+  "bonus": [
+    {
+      "id": "sec.header.hsts.long",
+      "points": 5,
+      "observed": "HSTS max-age >= 180일"
+    }
+  ],
+  "raw": {
+    "url": "https://cando8442.github.io/school-work-links/",
+    "finalUrl": "https://cando8442.github.io/school-work-links/",
+    "httpStatus": 200,
+    "ttfbMs": 384,
+    "observedHeaders": [
+      "accept-ranges",
+      "access-control-allow-origin",
+      "age",
+      "cache-control",
+      "connection",
+      "content-encoding",
+      "content-length",
+      "content-type",
+      "date",
+      "etag",
+      "expires",
+      "last-modified",
+      "server",
+      "strict-transport-security",
+      "vary",
+      "via",
+      "x-cache",
+      "x-cache-hits",
+      "x-fastly-request-id",
+      "x-github-edge-region",
+      "x-github-request-id",
+      "x-proxy-cache",
+      "x-served-by",
+      "x-timer"
+    ],
+    "scannedAt": "2026-09-06T06:35:41.976Z"
+  }
+}
