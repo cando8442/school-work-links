@@ -1593,3 +1593,15 @@ img {
   padding: 0;
   font-size: 13px;
 }
+
+
+.dl-form select {
+  width: 100%;
+  padding: 8px 10px;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--white);
+}

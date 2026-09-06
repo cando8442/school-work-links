@@ -11,6 +11,7 @@ import InstallButton from "@/components/InstallButton";
 import TaskBoard from "@/components/TaskBoard";
 import { useSchoolUser } from "@/components/SchoolGate";
 import {
+  editEvent,
   isSchoolLoginEnabled,
   removeEvent,
   setEventLinks,
@@ -75,10 +76,42 @@ function DeadlineRow({ notice, event }: { notice: Notice; event?: SchoolEvent })
   const [rows, setRows] = useState<SavedLink[]>([{ label: "", href: "" }]);
   const [busy, setBusy] = useState(false);
   const [confirming, setConfirming] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(false);
+  const [info, setInfo] = useState({ date: "", title: "", dept: "", detail: "", kind: "deadline" });
 
   const left = daysLeft(notice.due);
   const links = event?.links ?? [];
   const mine = Boolean(event) && (canEdit() || user?.email === event?.authorEmail);
+
+  const startInfo = () => {
+    if (!event) return;
+    setInfo({
+      date: event.date,
+      title: event.title,
+      dept: event.dept,
+      detail: event.detail,
+      kind: event.kind
+    });
+    setInfoOpen(true);
+    setOpen(true);
+  };
+
+  const saveInfo = async () => {
+    if (!event || busy) return;
+    setBusy(true);
+    try {
+      await editEvent(event.id, {
+        date: info.date,
+        title: info.title,
+        dept: info.dept,
+        detail: info.detail,
+        kind: info.kind === "deadline" ? "deadline" : "schedule"
+      });
+      setInfoOpen(false);
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const startEdit = () => {
     setRows(links.length > 0 ? [...links, { label: "", href: "" }] : [{ label: "", href: "" }]);
@@ -131,8 +164,12 @@ function DeadlineRow({ notice, event }: { notice: Notice; event?: SchoolEvent })
               </span>
             )}
 
-            {mine && !editing ? (
+            {mine && !editing && !infoOpen ? (
               <span className="dl-tools">
+                <button type="button" className="dl-edit" onClick={startInfo}>
+                  내용 고치기
+                </button>
+
                 <button type="button" className="dl-edit" onClick={startEdit}>
                   시트와 서식 링크 걸기
                 </button>
@@ -158,6 +195,49 @@ function DeadlineRow({ notice, event }: { notice: Notice; event?: SchoolEvent })
                     </button>
                   </span>
                 )}
+              </span>
+            ) : null}
+
+            {mine && infoOpen ? (
+              <span className="dl-form">
+                <span className="fm-pair">
+                  <input
+                    type="date"
+                    value={info.date}
+                    onChange={e => setInfo({ ...info, date: e.target.value })}
+                  />
+                  <input
+                    value={info.dept}
+                    onChange={e => setInfo({ ...info, dept: e.target.value })}
+                    placeholder="부서 (예: 교무행정부)"
+                  />
+                </span>
+                <span className="fm-pair">
+                  <select value={info.kind} onChange={e => setInfo({ ...info, kind: e.target.value })}>
+                    <option value="deadline">마감</option>
+                    <option value="schedule">학사일정</option>
+                  </select>
+                  <input
+                    value={info.title}
+                    onChange={e => setInfo({ ...info, title: e.target.value })}
+                    placeholder="할 일"
+                  />
+                </span>
+                <span className="fm-pair">
+                  <input
+                    value={info.detail}
+                    onChange={e => setInfo({ ...info, detail: e.target.value })}
+                    placeholder="상세 안내"
+                  />
+                </span>
+                <span className="fm-actions">
+                  <button type="button" className="fm-save" onClick={saveInfo} disabled={busy}>
+                    {busy ? "저장 중" : "저장"}
+                  </button>
+                  <button type="button" className="fm-cancel" onClick={() => setInfoOpen(false)}>
+                    취소
+                  </button>
+                </span>
               </span>
             ) : null}
 
