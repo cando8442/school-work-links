@@ -38,6 +38,9 @@ export type Department = {
   name: string;
   /* 탭을 눌렀을 때 제목 옆에 붙는 작은 글씨입니다. */
   subtitle?: string;
+  /* 이 부서의 공유 드라이브입니다. url 을 비워 두면 "링크 미등록"으로 표시됩니다.
+     학교 구글 계정에만 권한을 주면, 사이트 주소를 알아도 자료는 열리지 않습니다. */
+  drive?: { url: string; note?: string };
   duties: Duty[];
 };
 
@@ -46,6 +49,7 @@ export const departments: Department[] = [
     id: "vice-principal",
     name: "교감",
     subtitle: "학교 운영 총괄",
+    drive: { url: "", note: "학교교육계획, 위원회 회의록" },
     duties: [
       {
         id: "vp-plan",
@@ -100,6 +104,7 @@ export const departments: Department[] = [
     id: "affairs",
     name: "교무행정부",
     subtitle: "학적·출결·나이스",
+    drive: { url: "", note: "학적·출결·정보공시 자료" },
     duties: [
       {
         id: "af-record",
@@ -183,6 +188,7 @@ export const departments: Department[] = [
     id: "creative",
     name: "창의연구부",
     subtitle: "수업·연수·동아리",
+    drive: { url: "", note: "연수·동아리·교내 대회 자료" },
     duties: [
       {
         id: "cr-plc",
@@ -243,6 +249,7 @@ export const departments: Department[] = [
     id: "curriculum",
     name: "교육과정부",
     subtitle: "편제·평가·성적",
+    drive: { url: "", note: "편제표·평가계획·성적 서식" },
     duties: [
       {
         id: "cu-plan",
@@ -312,6 +319,7 @@ export const departments: Department[] = [
     id: "career",
     name: "진로진학부",
     subtitle: "진로·대입",
+    drive: { url: "", note: "진로·대입 자료와 설명회 자료집" },
     duties: [
       {
         id: "ca-counsel",
@@ -371,6 +379,7 @@ export const departments: Department[] = [
     id: "safety",
     name: "생활안전부",
     subtitle: "생활교육·안전",
+    drive: { url: "", note: "생활교육·안전 관련 서식(민감 자료는 접근 제한 필수)" },
     duties: [
       {
         id: "sf-guidance",
@@ -430,6 +439,7 @@ export const departments: Department[] = [
     id: "grade1",
     name: "1학년부",
     subtitle: "학년 운영",
+    drive: { url: "", note: "1학년 학년 자료" },
     duties: [
       {
         id: "g1-run",
@@ -479,6 +489,7 @@ export const departments: Department[] = [
     id: "grade2",
     name: "2학년부",
     subtitle: "학년 운영",
+    drive: { url: "", note: "2학년 학년 자료" },
     duties: [
       {
         id: "g2-run",
@@ -533,6 +544,7 @@ export const departments: Department[] = [
     id: "grade3",
     name: "3학년부",
     subtitle: "학년 운영·대입",
+    drive: { url: "", note: "3학년 학년 자료와 대입 서류 대장" },
     duties: [
       {
         id: "g3-run",
@@ -580,9 +592,10 @@ export const departments: Department[] = [
     ]
   },
   {
-    id: "affairs-google",
-    name: "교무부(1)",
-    subtitle: "구글 워크스페이스 방식",
+    id: "shared-drive",
+    name: "공유함 운영",
+    subtitle: "구글 드라이브 사용 규칙",
+    drive: { url: "", note: "공유함 사용 규칙과 서식 모음" },
     duties: [
       {
         id: "ag-storage",
@@ -643,74 +656,6 @@ export const departments: Department[] = [
         links: [
           { label: "구글 캘린더", href: "https://calendar.google.com" },
           { label: "구글 미트", href: "https://meet.google.com" }
-        ]
-      }
-    ]
-  },
-  {
-    id: "affairs-ms",
-    name: "교무부(2)",
-    subtitle: "Microsoft 365 방식",
-    duties: [
-      {
-        id: "am-storage",
-        title: "부서 문서 보관·공유",
-        owner: "담당",
-        summary: "팀즈에 부서 팀을 만들고 그 안 문서함에 자료를 둡니다.",
-        routines: [
-          { cycle: "학년초", what: "부서 팀 생성과 구성원 추가" },
-          { cycle: "수시", what: "업무별 채널 문서함에 자료 저장" },
-          { cycle: "인사이동 시", what: "팀 구성원 교체(파일은 팀에 남음)" }
-        ],
-        howto: [
-          "개인 OneDrive가 아니라 팀 문서함에 올립니다. 담당자가 바뀌어도 파일이 남습니다",
-          "업무별로 채널을 만들면 채널마다 폴더가 자동으로 생깁니다",
-          "권한은 소유자(부장), 구성원(부서원), 게스트(외부)로 나눕니다"
-        ],
-        notes: [
-          "서울시교육청은 클래스이음(o365.sen.go.kr)으로 교직원 계정을 제공합니다",
-          "한글(HWP) 문서는 웹에서 바로 열리지 않아 내려받아 열어야 합니다"
-        ],
-        links: [
-          { label: "클래스이음(서울 M365)", href: "https://o365.sen.go.kr" },
-          { label: "Teams", href: "https://teams.microsoft.com" }
-        ]
-      },
-      {
-        id: "am-collect",
-        title: "자료 취합(서식 수합)",
-        owner: "담당",
-        summary: "Forms로 받아 Excel 파일에 모읍니다.",
-        routines: [
-          { cycle: "수시", what: "Microsoft Forms로 제출 양식 배포" },
-          { cycle: "마감일", what: "응답 파일에서 미제출자 확인과 개별 안내" }
-        ],
-        howto: [
-          "Forms 응답은 팀 문서함의 Excel 파일로 저장됩니다",
-          "미제출자는 명단 시트와 응답 시트를 함수로 대조해 찾습니다",
-          "반복 작업은 Power Automate 흐름으로 알림을 붙일 수 있습니다"
-        ],
-        links: [
-          { label: "Microsoft Forms", href: "https://forms.office.com" },
-          { label: "Office 홈", href: "https://www.office.com" }
-        ]
-      },
-      {
-        id: "am-meeting",
-        title: "회의·알림·일정",
-        owner: "담당",
-        summary: "Teams 채널과 Outlook 일정으로 부서 일정과 전달사항을 공유합니다.",
-        routines: [
-          { cycle: "매주", what: "부서 협의회 일정 Outlook 등록" },
-          { cycle: "수시", what: "Teams 채널 게시글로 전달사항 공지" }
-        ],
-        howto: [
-          "전달사항은 채팅이 아니라 채널 게시글로 남겨야 나중에 찾을 수 있습니다",
-          "회의는 Teams 회의로 열면 녹화와 기록이 같은 채널에 쌓입니다"
-        ],
-        links: [
-          { label: "Outlook", href: "https://outlook.office.com" },
-          { label: "Teams", href: "https://teams.microsoft.com" }
         ]
       }
     ]

@@ -280,6 +280,20 @@ function DeptTab({ dept }: { dept: Department }) {
   return (
     <div className="cy-content-box">
       <SectionTitle title={dept.name} sub={dept.subtitle ?? `업무분장 ${dept.duties.length}건`} />
+
+      {dept.drive ? (
+        <div className="cy-drive-box">
+          {dept.drive.url ? (
+            <a className="cy-drive-link" href={dept.drive.url} target="_blank" rel="noopener noreferrer">
+              부서 공유 드라이브 열기
+            </a>
+          ) : (
+            <span className="cy-drive-empty">공유 드라이브 링크가 아직 등록되지 않았습니다.</span>
+          )}
+          {dept.drive.note ? <span className="cy-drive-note">{dept.drive.note}</span> : null}
+        </div>
+      ) : null}
+
       {dept.duties.length === 0 ? (
         <div className="cy-empty-box">아직 등록된 업무분장이 없습니다.</div>
       ) : (
