@@ -134,6 +134,11 @@ export default function SchoolGate({ children }: { children: React.ReactNode }) 
         </button>
         {error ? <p className="sg-error">{error}</p> : null}
         <p className="sg-note">여러 계정에 로그인되어 있으면 학교 계정을 골라 주세요.</p>
+        <p className="sg-note">
+          <a className="dl-edit" href="./privacy/">
+            개인정보처리방침
+          </a>
+        </p>
         <div className="sg-install">
           <InstallButton />
         </div>
