@@ -3,7 +3,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { asset } from "@/lib/asset";
 import Calendar from "@/components/Calendar";
+import DutyEditor from "@/components/DutyEditor";
 import InstallButton from "@/components/InstallButton";
+import TaskBoard from "@/components/TaskBoard";
+import { useSchoolUser } from "@/components/SchoolGate";
+import { isSchoolLoginEnabled } from "@/lib/school";
 import { boardPosts } from "@/config/linktree";
 import { departments, notices, type Department, type Duty, type Notice } from "@/config/departments";
 
@@ -85,7 +89,6 @@ function HomeView() {
   return (
     <>
       <section className="hero">
-        <img className="hero-img" src={asset("/assets/campus.png")} alt="서울세종고등학교 전경 그림" />
         <div className="hero-text">
           <h1>부별공유</h1>
           <p>부서별 업무분장과 마감을 한곳에서 봅니다. 자료는 구글 문서와 시트에 두고 여기에는 링크만 겁니다.</p>
@@ -149,6 +152,11 @@ function HomeView() {
             </div>
           ) : null}
         </div>
+      </section>
+
+      <section className="tasks">
+        <h2 className="sec-title">제출 현황</h2>
+        <TaskBoard />
       </section>
 
       {boardPosts.length > 0 ? (
@@ -266,6 +274,15 @@ function DeptView({ dept }: { dept: Department }) {
         </div>
       ) : null}
 
+      {open ? null : (
+        <section className="dept-block">
+          <h2 className="sec-title">제출 현황</h2>
+          <TaskBoard deptId={dept.id} />
+        </section>
+      )}
+
+      {open ? null : <h2 className="sec-title">업무분장</h2>}
+
       {open ? (
         <DutyDetail duty={open} onBack={() => setOpenId(null)} />
       ) : dept.duties.length === 0 ? (
@@ -289,6 +306,8 @@ function DeptView({ dept }: { dept: Department }) {
           ))}
         </ul>
       )}
+
+      {open ? null : <DutyEditor deptId={dept.id} />}
     </section>
   );
 }
@@ -296,6 +315,19 @@ function DeptView({ dept }: { dept: Department }) {
 /* ------------------------------------- */
 /* 전체 틀                                */
 /* ------------------------------------- */
+
+function SignedIn() {
+  const { user, signOut } = useSchoolUser();
+  if (!isSchoolLoginEnabled || !user) return null;
+  return (
+    <span className="hd-user">
+      {user.name || user.email}
+      <button type="button" onClick={signOut}>
+        로그아웃
+      </button>
+    </span>
+  );
+}
 
 export default function LinkTree() {
   const [tab, setTab] = useState<string>(HOME);
@@ -325,7 +357,10 @@ export default function LinkTree() {
             <img src={asset("/assets/school-logo.png")} alt="서울세종고등학교" />
             <span className="hd-sub">부별공유</span>
           </div>
-          <InstallButton />
+          <div className="hd-right">
+            <SignedIn />
+            <InstallButton />
+          </div>
         </div>
 
         <nav className="gnb" aria-label="부서 선택">

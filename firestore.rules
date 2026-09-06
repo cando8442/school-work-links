@@ -1,63 +1,65 @@
 rules_version = '2';
 
-/* 미요Lab 한줄평(방명록) 보안 규칙입니다.
-   로그인 없이 누구나 한 줄을 남길 수 있고, 남기면 바로 공개됩니다.
-   대신 아래 조건으로 형태를 제한해 아무 데이터나 넣지 못하게 막습니다.
+/* 부별공유 보안 규칙입니다.
 
-   - 필드는 author, text, approved, createdAt 네 개만 허용
-   - 이름 20자, 본문 100자 제한
-   - createdAt 은 클라이언트가 정할 수 없고 서버 시간만 허용
-   - 한 번 쓴 글은 클라이언트에서 수정·삭제 불가 (콘솔에서만 삭제)
+   학교 구글 계정으로 로그인한 사람만 읽고 쓸 수 있습니다.
+   - duties : 부서별 업무 기록. 쓴 사람만 고치거나 지울 수 있습니다.
+   - tasks  : 제출 과제. 만든 사람만 고치거나 지울 수 있고,
+              제출 완료 표시(done)는 로그인한 학교 계정이면 누구나 바꿀 수 있습니다.
 
-   승인제로 바꾸려면: read 조건을 resource.data.approved == true 로 바꾸고,
-   create 조건의 approved == true 를 approved == false 로 바꾸면 됩니다. */
+   도메인을 바꾸려면 아래 schoolAccount() 안의 주소를 고치세요. */
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /guestbook/{entryId} {
-      allow read: if true;
 
-      allow create: if request.resource.data.keys().hasOnly(['author', 'text', 'approved', 'createdAt'])
-        && request.resource.data.author is string
-        && request.resource.data.author.size() >= 1
-        && request.resource.data.author.size() <= 20
-        && request.resource.data.text is string
-        && request.resource.data.text.size() >= 1
-        && request.resource.data.text.size() <= 100
-        && request.resource.data.approved == true
-        && request.resource.data.createdAt == request.time;
-
-      allow update, delete: if false;
+    function schoolAccount() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email.matches('.*@seoulsejong[.]sen[.]hs[.]kr$');
     }
 
-    /* 미니홈피 왼쪽 위 TODAY / TOTAL 방문 수입니다. 문서 하나만 씁니다.
+    function isAuthor() {
+      return schoolAccount() && resource.data.authorEmail == request.auth.token.email;
+    }
 
-       - 한 번에 total 을 1씩만 올릴 수 있습니다
-       - 날짜(day)가 바뀐 첫 방문이면 today 는 1로 돌아갑니다
-       - 필드는 total, today, day 세 개만 허용하고 삭제는 막습니다
+    match /duties/{dutyId} {
+      allow read: if schoolAccount();
 
-       day 문자열이 진짜 오늘인지는 규칙에서 확인하지 못합니다.
-       조작하더라도 today 가 1로 리셋되는 정도이고 total 은 영향받지 않습니다. */
-    match /counters/site {
-      allow read: if true;
+      allow create: if schoolAccount()
+        && request.resource.data.authorEmail == request.auth.token.email
+        && request.resource.data.title is string
+        && request.resource.data.title.size() >= 1
+        && request.resource.data.title.size() <= 60
+        && request.resource.data.deptId is string
+        && request.resource.data.routines.size() <= 10
+        && request.resource.data.links.size() <= 10;
 
-      allow create: if request.resource.data.keys().hasOnly(['total', 'today', 'day'])
-        && request.resource.data.total == 1
-        && request.resource.data.today == 1
-        && request.resource.data.day is string;
+      allow update: if isAuthor()
+        && request.resource.data.authorEmail == resource.data.authorEmail;
 
-      allow update: if request.resource.data.keys().hasOnly(['total', 'today', 'day'])
-        && request.resource.data.total is int
-        && request.resource.data.today is int
-        && request.resource.data.day is string
-        && request.resource.data.total == resource.data.total + 1
+      allow delete: if isAuthor();
+    }
+
+    match /tasks/{taskId} {
+      allow read: if schoolAccount();
+
+      allow create: if schoolAccount()
+        && request.resource.data.authorEmail == request.auth.token.email
+        && request.resource.data.title is string
+        && request.resource.data.title.size() >= 1
+        && request.resource.data.title.size() <= 60
+        && request.resource.data.due is string
+        && request.resource.data.targets.size() <= 60
+        && request.resource.data.done.size() == 0;
+
+      /* 제출 완료 표시만 바꾸는 경우는 학교 계정이면 누구나 할 수 있습니다. */
+      allow update: if schoolAccount()
         && (
-          (request.resource.data.day == resource.data.day
-            && request.resource.data.today == resource.data.today + 1)
-          || (request.resource.data.day != resource.data.day
-            && request.resource.data.today == 1)
+          isAuthor()
+          || (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['done'])
+              && request.resource.data.done.size() <= 60)
         );
 
-      allow delete: if false;
+      allow delete: if isAuthor();
     }
 
     /* 그 밖의 모든 경로는 차단합니다. */
