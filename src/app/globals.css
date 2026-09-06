@@ -2,26 +2,26 @@
    글자는 작고 흐린 회색 대신, 진한 먹색과 충분한 크기로 씁니다. */
 
 :root {
-  /* 학교 수채화 그림에서 뽑은 색입니다.
-     종이 아이보리, 올리브 녹색, 벽돌 흙색, 연한 하늘색, 교표 자주색. */
-  --pine: #5F7A4A;
-  --pine-dark: #476036;
-  --leaf: #8FA86A;
-  --leaf-soft: #E6EDD8;
-  --brick: #A8724F;
-  --crimson: #A8112A;
-  --sky: #B9C9D4;
-  --ink: #2B3126;
-  --body: #4A5245;
-  --muted: #6E7566;
-  --line: #DCD8C8;
-  --line-soft: #EAE6D8;
-  --paper: #F5F2E6;
-  --paper-deep: #EDE9DA;
-  --tint: #EEF1E6;
+  /* 학교 수채화와 교표에서 뽑은 색입니다.
+     종이 아이보리 바탕에, 교표 자주와 벽돌 붉은색을 씁니다. */
+  --wine: #9B2233;
+  --wine-dark: #7A1727;
+  --brick: #B4653F;
+  --blush: #E3C3BB;
+  --blush-soft: #F8EAE5;
+  --crimson: #D2542F;
+  --slate: #5C7A8C;
+  --ink: #2E2724;
+  --body: #52453F;
+  --muted: #766862;
+  --line: #E2D9CF;
+  --line-soft: #EFE7DE;
+  --paper: #F7F3EA;
+  --paper-deep: #F0E9DD;
+  --tint: #F8EAE5;
   --white: #FFFFFF;
   --radius: 10px;
-  --shadow: 0 2px 10px rgba(43, 49, 38, 0.08);
+  --shadow: 0 2px 10px rgba(46, 39, 36, 0.09);
   --font: "Pretendard", "Noto Sans KR", "맑은 고딕", "Malgun Gothic", system-ui, sans-serif;
 }
 
@@ -108,7 +108,7 @@ img {
 .hd-sub {
   font-size: 19px;
   font-weight: 700;
-  color: var(--pine);
+  color: var(--wine);
   padding-left: 12px;
   border-left: 1px solid var(--line);
   white-space: nowrap;
@@ -139,13 +139,13 @@ img {
 }
 
 .gnb-btn:hover {
-  color: var(--pine);
-  background: var(--leaf-soft);
+  color: var(--wine);
+  background: var(--blush-soft);
 }
 
 .gnb-btn.is-active {
-  color: var(--pine);
-  border-bottom-color: var(--pine);
+  color: var(--wine);
+  border-bottom-color: var(--wine);
   font-weight: 800;
 }
 
@@ -160,13 +160,13 @@ img {
   font-size: 14px;
   font-weight: 700;
   color: var(--white);
-  background: var(--pine);
+  background: var(--wine);
   border-radius: 999px;
   white-space: nowrap;
 }
 
 .ib-btn:hover {
-  background: var(--pine-dark);
+  background: var(--wine-dark);
 }
 
 .ib-guide {
@@ -235,7 +235,7 @@ img {
   color: var(--ink);
   padding-bottom: 10px;
   margin-bottom: 14px;
-  border-bottom: 2px solid var(--pine);
+  border-bottom: 2px solid var(--wine);
 }
 
 .hero {
@@ -246,9 +246,9 @@ img {
   overflow: hidden;
   border: 1px solid var(--line);
   background:
-    radial-gradient(60% 90% at 12% 0%, rgba(143, 168, 106, 0.30), transparent 70%),
-    radial-gradient(55% 85% at 88% 10%, rgba(185, 201, 212, 0.40), transparent 72%),
-    radial-gradient(70% 90% at 60% 100%, rgba(168, 114, 79, 0.16), transparent 70%),
+    radial-gradient(60% 90% at 12% 0%, rgba(180, 101, 63, 0.26), transparent 70%),
+    radial-gradient(55% 85% at 88% 10%, rgba(155, 34, 51, 0.16), transparent 72%),
+    radial-gradient(70% 90% at 55% 100%, rgba(210, 84, 47, 0.14), transparent 70%),
     var(--paper);
 }
 
@@ -304,8 +304,9 @@ img {
   justify-content: center;
   gap: 18px;
   padding: 12px;
-  background: var(--pine);
-  color: var(--white);
+  background: var(--paper-deep);
+  color: var(--ink);
+  border-bottom: 2px solid var(--wine);
 }
 
 .cal-month {
@@ -318,12 +319,12 @@ img {
   height: 32px;
   font-size: 20px;
   line-height: 1;
-  color: var(--white);
+  color: var(--wine);
   border-radius: 6px;
 }
 
 .cal-nav:hover {
-  background: rgba(255, 255, 255, 0.18);
+  background: var(--blush-soft);
 }
 
 .cal-grid {
@@ -340,7 +341,7 @@ img {
   font-size: 13px;
   font-weight: 700;
   color: var(--muted);
-  background: var(--leaf-soft);
+  background: var(--paper-deep);
 }
 
 .cal-wd.is-sun {
@@ -348,7 +349,7 @@ img {
 }
 
 .cal-wd.is-sat {
-  color: var(--pine);
+  color: var(--slate);
 }
 
 .cal-cell {
@@ -374,24 +375,24 @@ img {
 }
 
 .cal-cell.is-sat .cal-day {
-  color: var(--pine);
+  color: var(--slate);
 }
 
 .cal-cell:not(.is-empty):hover {
-  background: var(--leaf-soft);
+  background: var(--blush-soft);
 }
 
 .cal-cell.is-today {
-  box-shadow: inset 0 0 0 2px var(--pine);
+  box-shadow: inset 0 0 0 2px var(--wine);
 }
 
 .cal-cell.is-today .cal-day {
   font-weight: 800;
-  color: var(--pine);
+  color: var(--wine);
 }
 
 .cal-cell.is-picked {
-  background: var(--leaf-soft);
+  background: var(--blush-soft);
   box-shadow: inset 0 0 0 2px var(--crimson);
 }
 
@@ -434,8 +435,8 @@ img {
   padding: 2px 8px;
   font-size: 12px;
   font-weight: 700;
-  color: var(--pine);
-  background: var(--leaf-soft);
+  color: var(--wine);
+  background: var(--blush-soft);
   border-radius: 4px;
 }
 
@@ -451,7 +452,7 @@ img {
 .dl-group-title {
   font-size: 15px;
   font-weight: 800;
-  color: var(--pine);
+  color: var(--wine);
   margin-bottom: 8px;
 }
 
@@ -463,7 +464,7 @@ img {
   padding: 14px 16px;
   font-size: 14px;
   color: var(--muted);
-  background: var(--leaf-soft);
+  background: var(--blush-soft);
   border-radius: 8px;
   margin-bottom: 20px;
 }
@@ -480,7 +481,7 @@ img {
   padding: 12px 14px;
   background: var(--white);
   border: 1px solid var(--line);
-  border-left: 4px solid var(--pine);
+  border-left: 4px solid var(--slate);
   border-radius: 8px;
 }
 
@@ -490,8 +491,8 @@ img {
 }
 
 .dl-item.is-soon {
-  border-left-color: #C9821B;
-  background: #FFFBF3;
+  border-left-color: var(--brick);
+  background: #FCF4EE;
 }
 
 .dl-item.is-over {
@@ -523,7 +524,7 @@ img {
 }
 
 .dl-item.is-soon .dl-date em {
-  color: #A56613;
+  color: var(--brick);
 }
 
 .dl-body {
@@ -543,8 +544,8 @@ img {
   padding: 2px 8px;
   font-size: 12px;
   font-weight: 700;
-  color: var(--pine);
-  background: var(--leaf-soft);
+  color: var(--brick);
+  background: var(--paper-deep);
   border-radius: 4px;
 }
 
@@ -580,7 +581,7 @@ img {
 }
 
 .link-card:hover {
-  border-color: var(--pine);
+  border-color: var(--brick);
   box-shadow: var(--shadow);
 }
 
@@ -589,8 +590,8 @@ img {
   padding: 2px 8px;
   font-size: 12px;
   font-weight: 700;
-  color: var(--pine);
-  background: var(--leaf-soft);
+  color: var(--brick);
+  background: var(--paper-deep);
   border-radius: 4px;
 }
 
@@ -614,7 +615,7 @@ img {
 .dept-head {
   padding-bottom: 12px;
   margin-bottom: 16px;
-  border-bottom: 2px solid var(--pine);
+  border-bottom: 2px solid var(--wine);
 }
 
 .dept-head h1 {
@@ -635,7 +636,7 @@ img {
   gap: 12px;
   padding: 14px 16px;
   margin-bottom: 20px;
-  background: var(--leaf-soft);
+  background: var(--blush-soft);
   border: 1px solid #D3E0EE;
   border-radius: 8px;
 }
@@ -645,12 +646,12 @@ img {
   font-size: 14px;
   font-weight: 700;
   color: var(--white);
-  background: var(--pine);
+  background: var(--wine);
   border-radius: 999px;
 }
 
 .drive-btn:hover {
-  background: var(--pine-dark);
+  background: var(--wine-dark);
 }
 
 .drive-empty {
@@ -685,7 +686,7 @@ img {
 }
 
 .duty-card:hover {
-  border-color: var(--pine);
+  border-color: var(--brick);
   box-shadow: var(--shadow);
 }
 
@@ -706,8 +707,8 @@ img {
   padding: 2px 8px;
   font-size: 12px;
   font-weight: 700;
-  color: var(--pine);
-  background: var(--leaf-soft);
+  color: var(--brick);
+  background: var(--paper-deep);
   border-radius: 4px;
 }
 
@@ -727,15 +728,15 @@ img {
   padding: 8px 16px;
   font-size: 14px;
   font-weight: 700;
-  color: var(--pine);
+  color: var(--wine);
   background: var(--white);
-  border: 1px solid var(--pine);
+  border: 1px solid var(--wine);
   border-radius: 999px;
 }
 
 .back-btn:hover {
   color: var(--white);
-  background: var(--pine);
+  background: var(--wine);
 }
 
 .duty-detail-head {
@@ -768,7 +769,7 @@ img {
 .duty-block h3 {
   font-size: 16px;
   font-weight: 800;
-  color: var(--pine);
+  color: var(--wine);
   padding-bottom: 6px;
   margin-bottom: 10px;
   border-bottom: 1px solid var(--line);
@@ -792,8 +793,8 @@ img {
   font-size: 13px;
   font-weight: 700;
   text-align: center;
-  color: var(--pine);
-  background: var(--leaf-soft);
+  color: var(--brick);
+  background: var(--paper-deep);
   border-radius: 4px;
 }
 
@@ -834,15 +835,15 @@ img {
   padding: 7px 14px;
   font-size: 14px;
   font-weight: 600;
-  color: var(--pine);
+  color: var(--wine);
   background: var(--white);
-  border: 1px solid var(--pine);
+  border: 1px solid var(--wine);
   border-radius: 999px;
 }
 
 .chip-list a:hover {
   color: var(--white);
-  background: var(--pine);
+  background: var(--wine);
 }
 
 /* 꼬리말 */
@@ -1006,7 +1007,7 @@ img {
 
 .hd-user button {
   font-size: 13px;
-  color: var(--pine);
+  color: var(--wine);
   text-decoration: underline;
 }
 
@@ -1015,7 +1016,7 @@ img {
   font-size: 15px;
   font-weight: 700;
   color: var(--white);
-  background: var(--pine);
+  background: var(--wine);
   border-radius: 999px;
 }
 
@@ -1028,15 +1029,15 @@ img {
   padding: 10px 18px;
   font-size: 15px;
   font-weight: 700;
-  color: var(--pine);
+  color: var(--wine);
   background: var(--white);
-  border: 1px dashed var(--pine);
+  border: 1px dashed var(--wine);
   border-radius: 999px;
 }
 
 .add-btn:hover {
   color: var(--white);
-  background: var(--pine);
+  background: var(--wine);
 }
 
 .dept-block {
@@ -1062,7 +1063,7 @@ img {
   padding: 16px;
   background: var(--white);
   border: 1px solid var(--line);
-  border-left: 4px solid var(--pine);
+  border-left: 4px solid var(--slate);
   border-radius: 8px;
 }
 
@@ -1127,15 +1128,15 @@ img {
   padding: 2px 8px;
   font-size: 12px;
   font-weight: 700;
-  color: var(--pine);
-  background: var(--leaf-soft);
+  color: var(--wine);
+  background: var(--blush-soft);
   border-radius: 4px;
 }
 
 .tk-count {
   font-size: 14px;
   font-weight: 700;
-  color: var(--pine);
+  color: var(--wine);
 }
 
 .tk-guide {
@@ -1151,12 +1152,12 @@ img {
   font-size: 14px;
   font-weight: 700;
   color: var(--white);
-  background: var(--pine);
+  background: var(--wine);
   border-radius: 999px;
 }
 
 .tk-doc:hover {
-  background: var(--pine-dark);
+  background: var(--wine-dark);
 }
 
 .tk-targets {
@@ -1176,14 +1177,14 @@ img {
 }
 
 .tk-chip:hover:not(:disabled) {
-  border-color: var(--pine);
-  color: var(--pine);
+  border-color: var(--wine);
+  color: var(--wine);
 }
 
 .tk-chip.is-done {
   color: var(--white);
-  background: var(--pine);
-  border-color: var(--pine);
+  background: var(--wine);
+  border-color: var(--wine);
 }
 
 .tk-chip:disabled {
@@ -1208,7 +1209,7 @@ img {
 .fm {
   padding: 18px;
   background: var(--white);
-  border: 1px solid var(--pine);
+  border: 1px solid var(--wine);
   border-radius: 8px;
 }
 
@@ -1246,7 +1247,7 @@ img {
 
 .fm-row input:focus,
 .fm-row textarea:focus {
-  outline: 2px solid var(--leaf);
+  outline: 2px solid var(--brick);
   outline-offset: -1px;
 }
 
@@ -1266,7 +1267,7 @@ img {
   align-self: flex-start;
   font-size: 13px;
   font-weight: 700;
-  color: var(--pine);
+  color: var(--wine);
   text-decoration: underline;
 }
 
@@ -1289,7 +1290,7 @@ img {
   font-size: 15px;
   font-weight: 700;
   color: var(--white);
-  background: var(--pine);
+  background: var(--wine);
   border-radius: 999px;
 }
 
