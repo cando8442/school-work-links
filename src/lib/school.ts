@@ -590,6 +590,8 @@ export type SchoolEvent = {
   authorEmail: string;
   /* pending 이면 담당자가 승인하기 전이라 달력에 나오지 않습니다. */
   status: "pending" | "published";
+  /* 이 일을 하려면 열어야 하는 구글 시트나 서식입니다. */
+  links: SavedLink[];
 };
 
 export type EventInput = {
@@ -617,7 +619,8 @@ export function watchEvents(onData: (events: SchoolEvent[]) => void) {
         dept: String(data.dept ?? ""),
         detail: String(data.detail ?? ""),
         authorEmail: String(data.authorEmail ?? ""),
-        status: (data.status === "pending" ? "pending" : "published") as "pending" | "published"
+        status: (data.status === "pending" ? "pending" : "published") as "pending" | "published",
+        links: Array.isArray(data.links) ? (data.links as SavedLink[]) : []
       };
     });
     list.sort((a, b) => a.date.localeCompare(b.date));
@@ -660,6 +663,19 @@ export async function removeEvent(id: string) {
 export async function approveEvent(id: string) {
   if (!ready() || !db) throw new Error("아직 저장소가 설정되지 않았습니다.");
   await updateDoc(doc(db, "events", id), { status: "published" });
+}
+
+/* 이 일에 딸린 시트와 서식 링크를 바꿉니다. */
+export async function setEventLinks(id: string, links: SavedLink[]) {
+  if (!ready() || !db) throw new Error("아직 저장소가 설정되지 않았습니다.");
+  const clean = links
+    .filter(l => l.label.trim() && /^https?:\/\//i.test(l.href.trim()))
+    .slice(0, LIMITS.links)
+    .map(l => ({
+      label: l.label.trim().slice(0, LIMITS.label),
+      href: l.href.trim().slice(0, LIMITS.href)
+    }));
+  await updateDoc(doc(db, "events", id), { links: clean });
 }
 
 /* 일정 한 건을 고칩니다. */

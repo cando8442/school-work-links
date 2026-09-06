@@ -1502,3 +1502,64 @@ img {
 .pdf-pick input {
   display: none;
 }
+
+
+/* 마감 펼치기 */
+.dl-open {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0;
+}
+
+.dl-count {
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--wine);
+  background: var(--blush-soft);
+  border-radius: 4px;
+}
+
+.dl-panel {
+  display: block;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--line);
+}
+
+.dl-edit {
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--wine);
+  text-decoration: underline;
+}
+
+.dl-form {
+  display: block;
+  margin-top: 10px;
+}
+
+.dl-form .fm-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.dl-form input {
+  width: 100%;
+  padding: 8px 10px;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+.dl-form .fm-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}

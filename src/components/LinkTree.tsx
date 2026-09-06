@@ -10,7 +10,13 @@ import { DriveBar, FormList, PostBoard } from "@/components/DeptExtras";
 import InstallButton from "@/components/InstallButton";
 import TaskBoard from "@/components/TaskBoard";
 import { useSchoolUser } from "@/components/SchoolGate";
-import { isSchoolLoginEnabled, watchEvents, type SchoolEvent } from "@/lib/school";
+import {
+  isSchoolLoginEnabled,
+  setEventLinks,
+  watchEvents,
+  type SavedLink,
+  type SchoolEvent
+} from "@/lib/school";
 import { boardPosts } from "@/config/linktree";
 import { departments, notices, type Department, type Duty, type Notice } from "@/config/departments";
 
@@ -59,8 +65,36 @@ function stateOf(left: number) {
 /* 마감 목록                              */
 /* ------------------------------------- */
 
-function DeadlineRow({ notice }: { notice: Notice }) {
+/* 마감 한 줄입니다. 누르면 펼쳐지고, 그 안에 이 일을 하려면 열어야 하는 링크가 있습니다.
+   보는 것은 로그인한 사람 모두, 고치는 것은 담당자와 권한자만 할 수 있습니다. */
+function DeadlineRow({ notice, event }: { notice: Notice; event?: SchoolEvent }) {
+  const { user, canEdit } = useSchoolUser();
+  const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [rows, setRows] = useState<SavedLink[]>([{ label: "", href: "" }]);
+  const [busy, setBusy] = useState(false);
+
   const left = daysLeft(notice.due);
+  const links = event?.links ?? [];
+  const mine = Boolean(event) && (canEdit() || user?.email === event?.authorEmail);
+
+  const startEdit = () => {
+    setRows(links.length > 0 ? [...links, { label: "", href: "" }] : [{ label: "", href: "" }]);
+    setEditing(true);
+    setOpen(true);
+  };
+
+  const save = async () => {
+    if (!event || busy) return;
+    setBusy(true);
+    try {
+      await setEventLinks(event.id, rows);
+      setEditing(false);
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
     <li className={`dl-item is-${stateOf(left)}`}>
       <span className="dl-date">
@@ -68,11 +102,78 @@ function DeadlineRow({ notice }: { notice: Notice }) {
         <em>{leftLabel(left)}</em>
       </span>
       <span className="dl-body">
-        <span className="dl-head">
-          <span className="dl-dept">{notice.dept}</span>
-          <span className="dl-title">{notice.title}</span>
-        </span>
+        <button type="button" className="dl-open" onClick={() => setOpen(!open)}>
+          <span className="dl-head">
+            <span className="dl-dept">{notice.dept}</span>
+            <span className="dl-title">{notice.title}</span>
+            {links.length > 0 ? <span className="dl-count">서식 {links.length}</span> : null}
+          </span>
+        </button>
         {notice.detail ? <span className="dl-detail">{notice.detail}</span> : null}
+
+        {open ? (
+          <span className="dl-panel">
+            {links.length > 0 ? (
+              <ul className="chip-list">
+                {links.map(link => (
+                  <li key={link.href}>
+                    <a href={link.href} target="_blank" rel="noopener noreferrer">
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <span className="fm-hint">
+                {event ? "아직 걸어 둔 시트나 서식이 없습니다." : "링크를 걸 수 없는 항목입니다."}
+              </span>
+            )}
+
+            {mine && !editing ? (
+              <button type="button" className="dl-edit" onClick={startEdit}>
+                시트와 서식 링크 걸기
+              </button>
+            ) : null}
+
+            {mine && editing ? (
+              <span className="dl-form">
+                {rows.map((row, i) => (
+                  <span key={i} className="fm-pair">
+                    <input
+                      value={row.label}
+                      onChange={e =>
+                        setRows(rows.map((r, k) => (k === i ? { ...r, label: e.target.value } : r)))
+                      }
+                      placeholder="이름 (예: 제출 시트)"
+                    />
+                    <input
+                      value={row.href}
+                      onChange={e =>
+                        setRows(rows.map((r, k) => (k === i ? { ...r, href: e.target.value } : r)))
+                      }
+                      placeholder="https://docs.google.com/..."
+                    />
+                  </span>
+                ))}
+                <span className="fm-actions">
+                  <button
+                    type="button"
+                    className="fm-more"
+                    onClick={() => setRows([...rows, { label: "", href: "" }])}
+                  >
+                    + 한 줄 더
+                  </button>
+                  <button type="button" className="fm-save" onClick={save} disabled={busy}>
+                    {busy ? "저장 중" : "저장"}
+                  </button>
+                  <button type="button" className="fm-cancel" onClick={() => setEditing(false)}>
+                    취소
+                  </button>
+                </span>
+              </span>
+            ) : null}
+          </span>
+        ) : null}
       </span>
     </li>
   );
@@ -106,6 +207,8 @@ function HomeView() {
     return [...notices, ...fromEvents].sort((a, b) => a.due.localeCompare(b.due));
   }, [events]);
 
+  const eventById = useMemo(() => new Map(events.map(e => [e.id, e])), [events]);
+
   const overdue = sorted.filter(n => daysLeft(n.due) < 0);
   const todayList = sorted.filter(n => daysLeft(n.due) === 0);
   const week = sorted.filter(n => {
@@ -137,7 +240,7 @@ function HomeView() {
               <h3 className="dl-group-title">오늘까지</h3>
               <ul className="dl-list">
                 {todayList.map(n => (
-                  <DeadlineRow key={n.id} notice={n} />
+                  <DeadlineRow key={n.id} notice={n} event={eventById.get(n.id)} />
                 ))}
               </ul>
             </div>
@@ -150,7 +253,7 @@ function HomeView() {
               <h3 className="dl-group-title">기한이 지난 일</h3>
               <ul className="dl-list">
                 {overdue.map(n => (
-                  <DeadlineRow key={n.id} notice={n} />
+                  <DeadlineRow key={n.id} notice={n} event={eventById.get(n.id)} />
                 ))}
               </ul>
             </div>
@@ -163,7 +266,7 @@ function HomeView() {
             ) : (
               <ul className="dl-list">
                 {week.map(n => (
-                  <DeadlineRow key={n.id} notice={n} />
+                  <DeadlineRow key={n.id} notice={n} event={eventById.get(n.id)} />
                 ))}
               </ul>
             )}
@@ -174,7 +277,7 @@ function HomeView() {
               <h3 className="dl-group-title">다가오는 일</h3>
               <ul className="dl-list">
                 {later.map(n => (
-                  <DeadlineRow key={n.id} notice={n} />
+                  <DeadlineRow key={n.id} notice={n} event={eventById.get(n.id)} />
                 ))}
               </ul>
             </div>
