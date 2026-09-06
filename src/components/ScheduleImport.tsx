@@ -12,7 +12,15 @@
 
 import { useMemo, useState } from "react";
 import { useSchoolUser } from "@/components/SchoolGate";
-import { addEvents, removeEvent, type EventInput, type SchoolEvent } from "@/lib/school";
+import {
+  addEvents,
+  approveEvent,
+  editEvent,
+  removeEvent,
+  type EventInput,
+  type SchoolEvent
+} from "@/lib/school";
+import { parseAnnual, parseWeekly, readPdf } from "@/lib/pdfSchedule";
 
 function pad(n: number) {
   return String(n).padStart(2, "0");
@@ -86,9 +94,60 @@ export default function ScheduleImport({ events }: { events: SchoolEvent[] }) {
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const [pdfRows, setPdfRows] = useState<EventInput[]>([]);
+  const [pdfName, setPdfName] = useState("");
+  const [reading, setReading] = useState(false);
+
   const preview = useMemo(() => parseRows(text, year, kind), [text, year, kind]);
 
+  const pending = events.filter(e => e.status === "pending");
+  const published = events.filter(e => e.status !== "pending");
+
   if (!canEdit()) return null;
+
+  /* PDF 를 읽어 초안을 만듭니다. 학사일정은 바로 올리고, 주간 일정표는 승인 대기로 둡니다. */
+  const onPdf = async (file: File | null, mode: "annual" | "weekly") => {
+    if (!file || !user) return;
+    setReading(true);
+    setError(null);
+    setMessage(null);
+    try {
+      const pages = await readPdf(file);
+      const rows = mode === "annual" ? parseAnnual(pages, year) : parseWeekly(pages, year);
+      if (rows.length === 0) {
+        setError("읽어낸 일정이 없습니다. 다른 파일이거나 표 모양이 달라 보입니다.");
+        setPdfRows([]);
+        return;
+      }
+      setPdfRows(rows);
+      setPdfName(file.name);
+      setMessage(
+        mode === "annual"
+          ? `${rows.length}건을 읽었습니다. 확인하고 올리기를 누르세요.`
+          : `${rows.length}건을 읽었습니다. 올리면 승인 대기 목록으로 들어갑니다.`
+      );
+    } catch {
+      setError("PDF 를 읽지 못했습니다. 파일이 그림으로만 되어 있으면 글자를 뽑을 수 없습니다.");
+    } finally {
+      setReading(false);
+    }
+  };
+
+  const savePdfRows = async () => {
+    if (!user || pdfRows.length === 0) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const count = await addEvents(pdfRows, user);
+      setMessage(`${count}건을 넣었습니다.`);
+      setPdfRows([]);
+      setPdfName("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "저장하지 못했습니다.");
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const save = async () => {
     if (!user || busy) return;
@@ -110,9 +169,113 @@ export default function ScheduleImport({ events }: { events: SchoolEvent[] }) {
     <section className="tasks">
       <h2 className="sec-title">학사일정 가져오기</h2>
 
+      <div className="pdf-box">
+        <div className="pdf-row">
+          <label className="pdf-pick">
+            연간학사일정 PDF 올리기
+            <input
+              type="file"
+              accept="application/pdf"
+              onChange={e => {
+                void onPdf(e.target.files?.[0] ?? null, "annual");
+                e.target.value = "";
+              }}
+            />
+          </label>
+          <label className="pdf-pick">
+            금주의 일정표 PDF 올리기
+            <input
+              type="file"
+              accept="application/pdf"
+              onChange={e => {
+                void onPdf(e.target.files?.[0] ?? null, "weekly");
+                e.target.value = "";
+              }}
+            />
+          </label>
+          <span className="fm-hint">기준 학년도 {year}년</span>
+        </div>
+        {reading ? <p className="fm-hint">파일을 읽는 중입니다.</p> : null}
+
+        {pdfRows.length > 0 ? (
+          <div className="fm">
+            <h4 className="fm-title">
+              {pdfName} 에서 읽은 {pdfRows.length}건
+            </h4>
+            <ul className="form-list">
+              {pdfRows.slice(0, 15).map((row, i) => (
+                <li key={i}>
+                  <span className="admin-row">
+                    <span className="form-kind">{row.date}</span>
+                    {row.dept ? <span className="dl-dept">{row.dept}</span> : null}
+                    <span className="form-label">{row.title}</span>
+                    {row.kind === "deadline" ? <span className="saved-tag">마감</span> : null}
+                  </span>
+                  <button type="button" onClick={() => setPdfRows(pdfRows.filter((_, k) => k !== i))}>
+                    빼기
+                  </button>
+                </li>
+              ))}
+            </ul>
+            {pdfRows.length > 15 ? <p className="fm-hint">앞 15건만 보여 드립니다.</p> : null}
+            <div className="fm-actions">
+              <button type="button" className="fm-save" onClick={savePdfRows} disabled={busy}>
+                {busy ? "넣는 중" : `${pdfRows.length}건 올리기`}
+              </button>
+              <button type="button" className="fm-cancel" onClick={() => setPdfRows([])}>
+                취소
+              </button>
+            </div>
+          </div>
+        ) : null}
+      </div>
+
+      {pending.length > 0 ? (
+        <div className="fm">
+          <h4 className="fm-title">올릴까요? 승인 대기 {pending.length}건</h4>
+          <ul className="form-list">
+            {pending.map(ev => (
+              <li key={ev.id}>
+                <span className="admin-row">
+                  <span className="form-kind">{ev.date}</span>
+                  {ev.dept ? <span className="dl-dept">{ev.dept}</span> : null}
+                  <span className="form-label">{ev.title}</span>
+                  {ev.kind === "deadline" ? <span className="saved-tag">마감</span> : null}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    void approveEvent(ev.id);
+                  }}
+                >
+                  올리기
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const next = window.prompt("내용을 고칩니다", ev.title);
+                    if (next && next.trim()) void editEvent(ev.id, { title: next.trim() });
+                  }}
+                >
+                  고치기
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    void removeEvent(ev.id);
+                  }}
+                >
+                  버리기
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
       {!open ? (
         <button type="button" className="add-btn" onClick={() => setOpen(true)}>
-          + 학사일정 붙여넣기
+          + 직접 붙여넣기
         </button>
       ) : (
         <div className="fm">
@@ -186,11 +349,11 @@ export default function ScheduleImport({ events }: { events: SchoolEvent[] }) {
         </div>
       )}
 
-      {events.length > 0 ? (
+      {published.length > 0 ? (
         <details className="ev-list">
-          <summary>등록된 일정 {events.length}건 보기</summary>
+          <summary>등록된 일정 {published.length}건 보기</summary>
           <ul className="form-list">
-            {events.map(ev => (
+            {published.map(ev => (
               <li key={ev.id}>
                 <span className="admin-row">
                   <span className="form-kind">{ev.date}</span>
@@ -198,6 +361,15 @@ export default function ScheduleImport({ events }: { events: SchoolEvent[] }) {
                   <span className="form-label">{ev.title}</span>
                   {ev.kind === "deadline" ? <span className="saved-tag">마감</span> : null}
                 </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const next = window.prompt("내용을 고칩니다", ev.title);
+                    if (next && next.trim()) void editEvent(ev.id, { title: next.trim() });
+                  }}
+                >
+                  고치기
+                </button>
                 <button
                   type="button"
                   onClick={() => {

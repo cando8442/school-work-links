@@ -588,6 +588,8 @@ export type SchoolEvent = {
   dept: string;
   detail: string;
   authorEmail: string;
+  /* pending 이면 담당자가 승인하기 전이라 달력에 나오지 않습니다. */
+  status: "pending" | "published";
 };
 
 export type EventInput = {
@@ -596,6 +598,7 @@ export type EventInput = {
   kind: "schedule" | "deadline";
   dept: string;
   detail: string;
+  status?: "pending" | "published";
 };
 
 export function watchEvents(onData: (events: SchoolEvent[]) => void) {
@@ -613,7 +616,8 @@ export function watchEvents(onData: (events: SchoolEvent[]) => void) {
         kind: (data.kind === "deadline" ? "deadline" : "schedule") as "schedule" | "deadline",
         dept: String(data.dept ?? ""),
         detail: String(data.detail ?? ""),
-        authorEmail: String(data.authorEmail ?? "")
+        authorEmail: String(data.authorEmail ?? ""),
+        status: (data.status === "pending" ? "pending" : "published") as "pending" | "published"
       };
     });
     list.sort((a, b) => a.date.localeCompare(b.date));
@@ -628,7 +632,8 @@ function cleanEvent(input: EventInput, user: SchoolUser) {
     kind: input.kind === "deadline" ? "deadline" : "schedule",
     dept: input.dept.trim().slice(0, LIMITS.owner),
     detail: input.detail.trim().slice(0, LIMITS.summary),
-    authorEmail: user.email
+    authorEmail: user.email,
+    status: input.status === "pending" ? "pending" : "published"
   };
 }
 
@@ -649,4 +654,26 @@ export async function addEvents(inputs: EventInput[], user: SchoolUser) {
 export async function removeEvent(id: string) {
   if (!ready() || !db) throw new Error("아직 저장소가 설정되지 않았습니다.");
   await deleteDoc(doc(db, "events", id));
+}
+
+/* 대기 중인 일정을 올립니다. */
+export async function approveEvent(id: string) {
+  if (!ready() || !db) throw new Error("아직 저장소가 설정되지 않았습니다.");
+  await updateDoc(doc(db, "events", id), { status: "published" });
+}
+
+/* 일정 한 건을 고칩니다. */
+export async function editEvent(
+  id: string,
+  patch: { date?: string; title?: string; dept?: string; detail?: string; kind?: "schedule" | "deadline" }
+) {
+  if (!ready() || !db) throw new Error("아직 저장소가 설정되지 않았습니다.");
+  const body: Record<string, string> = {};
+  if (patch.date && /^\d{4}-\d{2}-\d{2}$/.test(patch.date)) body.date = patch.date;
+  if (patch.title) body.title = patch.title.trim().slice(0, LIMITS.title);
+  if (patch.dept !== undefined) body.dept = patch.dept.trim().slice(0, LIMITS.owner);
+  if (patch.detail !== undefined) body.detail = patch.detail.trim().slice(0, LIMITS.summary);
+  if (patch.kind) body.kind = patch.kind;
+  if (Object.keys(body).length === 0) return;
+  await updateDoc(doc(db, "events", id), body);
 }

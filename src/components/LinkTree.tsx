@@ -87,7 +87,7 @@ function HomeView() {
   const calendarItems = useMemo<Notice[]>(
     () => [
       ...notices,
-      ...events.map(e => ({
+      ...events.filter(e => e.status !== "pending").map(e => ({
         id: e.id,
         due: e.date,
         dept: e.dept || (e.kind === "deadline" ? "마감" : "학사일정"),
@@ -101,7 +101,7 @@ function HomeView() {
   /* 마감 목록에는 마감으로 표시한 것만 넣습니다. */
   const sorted = useMemo(() => {
     const fromEvents: Notice[] = events
-      .filter(e => e.kind === "deadline")
+      .filter(e => e.kind === "deadline" && e.status !== "pending")
       .map(e => ({ id: e.id, due: e.date, dept: e.dept || "마감", title: e.title, detail: e.detail }));
     return [...notices, ...fromEvents].sort((a, b) => a.due.localeCompare(b.due));
   }, [events]);

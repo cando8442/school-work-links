@@ -1470,3 +1470,35 @@ img {
   color: var(--wine);
   padding: 8px 0;
 }
+
+
+/* PDF 올리기 */
+.pdf-box {
+  margin-bottom: 14px;
+}
+
+.pdf-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.pdf-pick {
+  padding: 10px 18px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--white);
+  background: var(--wine);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.pdf-pick:hover {
+  background: var(--wine-dark);
+}
+
+.pdf-pick input {
+  display: none;
+}
