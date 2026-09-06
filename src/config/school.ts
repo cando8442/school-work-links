@@ -25,7 +25,7 @@ export const SCHOOL = {
   logo: "/assets/school-logo.png",
 
   /* 도름스 커뮤니티 나의 활동 링크입니다. 비워 두면 꼬리말에 나오지 않습니다. */
-  dormsUrl: "",
+  dormsUrl: "https://dorms.school/u/cando8442",
 
   /* 개인정보처리방침에 적는 담당자 표기입니다. 이름 대신 직책을 권합니다. */
   privacyManager: "부별공유 관리자"
