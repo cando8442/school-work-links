@@ -62,6 +62,36 @@ service cloud.firestore {
       allow delete: if isAuthor();
     }
 
+    match /depts/{deptId} {
+      allow read: if schoolAccount();
+      allow write: if schoolAccount()
+        && request.resource.data.keys().hasOnly(['driveUrl', 'updatedBy'])
+        && request.resource.data.updatedBy == request.auth.token.email;
+    }
+
+    match /posts/{postId} {
+      allow read: if schoolAccount();
+      allow create: if schoolAccount()
+        && request.resource.data.authorEmail == request.auth.token.email
+        && request.resource.data.title is string
+        && request.resource.data.title.size() >= 1
+        && request.resource.data.title.size() <= 60
+        && request.resource.data.body.size() <= 4000;
+      allow update: if isAuthor();
+      allow delete: if isAuthor();
+    }
+
+    match /forms/{formId} {
+      allow read: if schoolAccount();
+      allow create: if schoolAccount()
+        && request.resource.data.authorEmail == request.auth.token.email
+        && request.resource.data.label is string
+        && request.resource.data.label.size() >= 1
+        && request.resource.data.label.size() <= 40
+        && request.resource.data.href is string;
+      allow update, delete: if isAuthor();
+    }
+
     /* 그 밖의 모든 경로는 차단합니다. */
     match /{document=**} {
       allow read, write: if false;

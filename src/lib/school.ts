@@ -29,6 +29,7 @@ import {
   orderBy,
   query,
   serverTimestamp,
+  setDoc,
   updateDoc,
   where,
   type Firestore
@@ -334,4 +335,176 @@ export async function toggleTaskDone(id: string, target: string, done: boolean) 
   await updateDoc(doc(db, "tasks", id), {
     done: done ? arrayUnion(target) : arrayRemove(target)
   });
+}
+
+/* ------------------------------------- */
+/* 부서 공유 드라이브 링크                 */
+/* ------------------------------------- */
+
+export type DeptMeta = { driveUrl: string; updatedBy: string };
+
+export function watchDeptMeta(deptId: string, onData: (meta: DeptMeta | null) => void) {
+  if (!ready() || !db) {
+    onData(null);
+    return () => {};
+  }
+  return onSnapshot(doc(db, "depts", deptId), snapshot => {
+    const data = snapshot.data() as Record<string, unknown> | undefined;
+    onData(
+      data
+        ? { driveUrl: String(data.driveUrl ?? ""), updatedBy: String(data.updatedBy ?? "") }
+        : null
+    );
+  });
+}
+
+export async function saveDriveUrl(deptId: string, url: string, user: SchoolUser) {
+  if (!ready() || !db) throw new Error("아직 저장소가 설정되지 않았습니다.");
+  const clean = url.trim();
+  if (clean && !/^https?:\/\//i.test(clean)) throw new Error("https 로 시작하는 주소를 넣어 주세요.");
+  await setDoc(doc(db, "depts", deptId), {
+    driveUrl: clean.slice(0, LIMITS.href),
+    updatedBy: user.email
+  });
+}
+
+/* ------------------------------------- */
+/* 부서 게시글                            */
+/* ------------------------------------- */
+
+export type SavedPost = {
+  id: string;
+  deptId: string;
+  title: string;
+  body: string;
+  links: SavedLink[];
+  authorEmail: string;
+  authorName: string;
+  createdAt: number;
+};
+
+export function watchPosts(deptId: string | null, onData: (posts: SavedPost[]) => void) {
+  if (!ready() || !db) {
+    onData([]);
+    return () => {};
+  }
+
+  const base = collection(db, "posts");
+  const q = deptId ? query(base, where("deptId", "==", deptId)) : query(base);
+
+  return onSnapshot(q, snapshot => {
+    const list = snapshot.docs.map(d => {
+      const data = d.data() as Record<string, unknown>;
+      const stamp = data.createdAt as { toMillis?: () => number } | undefined;
+      return {
+        id: d.id,
+        deptId: String(data.deptId ?? ""),
+        title: String(data.title ?? ""),
+        body: String(data.body ?? ""),
+        links: Array.isArray(data.links) ? (data.links as SavedLink[]) : [],
+        authorEmail: String(data.authorEmail ?? ""),
+        authorName: String(data.authorName ?? ""),
+        createdAt: typeof stamp?.toMillis === "function" ? stamp.toMillis() : 0
+      };
+    });
+    list.sort((a, b) => b.createdAt - a.createdAt);
+    onData(list);
+  });
+}
+
+export type PostInput = {
+  deptId: string;
+  title: string;
+  body: string;
+  links: SavedLink[];
+};
+
+export async function addPost(input: PostInput, user: SchoolUser) {
+  if (!ready() || !db) throw new Error("아직 저장소가 설정되지 않았습니다.");
+  const title = input.title.trim().slice(0, LIMITS.title);
+  if (!title) throw new Error("제목을 적어 주세요.");
+  await addDoc(collection(db, "posts"), {
+    deptId: input.deptId,
+    title,
+    body: input.body.trim().slice(0, 4000),
+    links: input.links
+      .filter(l => l.label.trim() && /^https?:\/\//i.test(l.href.trim()))
+      .slice(0, LIMITS.links)
+      .map(l => ({ label: l.label.trim().slice(0, LIMITS.label), href: l.href.trim().slice(0, LIMITS.href) })),
+    authorEmail: user.email,
+    authorName: user.name,
+    createdAt: serverTimestamp()
+  });
+}
+
+export async function removePost(id: string) {
+  if (!ready() || !db) throw new Error("아직 저장소가 설정되지 않았습니다.");
+  await deleteDoc(doc(db, "posts", id));
+}
+
+/* ------------------------------------- */
+/* 업무분장별 서식                         */
+/* ------------------------------------- */
+
+export type SavedForm = {
+  id: string;
+  deptId: string;
+  dutyId: string;
+  label: string;
+  href: string;
+  kind: string;
+  authorEmail: string;
+};
+
+export function watchForms(deptId: string, onData: (forms: SavedForm[]) => void) {
+  if (!ready() || !db) {
+    onData([]);
+    return () => {};
+  }
+  return onSnapshot(query(collection(db, "forms"), where("deptId", "==", deptId)), snapshot => {
+    onData(
+      snapshot.docs.map(d => {
+        const data = d.data() as Record<string, unknown>;
+        return {
+          id: d.id,
+          deptId: String(data.deptId ?? ""),
+          dutyId: String(data.dutyId ?? ""),
+          label: String(data.label ?? ""),
+          href: String(data.href ?? ""),
+          kind: String(data.kind ?? ""),
+          authorEmail: String(data.authorEmail ?? "")
+        };
+      })
+    );
+  });
+}
+
+export type FormInput = {
+  deptId: string;
+  dutyId: string;
+  label: string;
+  href: string;
+  kind: string;
+};
+
+export async function addForm(input: FormInput, user: SchoolUser) {
+  if (!ready() || !db) throw new Error("아직 저장소가 설정되지 않았습니다.");
+  const label = input.label.trim().slice(0, LIMITS.label);
+  const href = input.href.trim();
+  if (!label) throw new Error("서식 이름을 적어 주세요.");
+  if (!/^https?:\/\//i.test(href)) throw new Error("https 로 시작하는 주소를 넣어 주세요.");
+  await addDoc(collection(db, "forms"), {
+    deptId: input.deptId,
+    dutyId: input.dutyId,
+    label,
+    href: href.slice(0, LIMITS.href),
+    kind: input.kind.trim().slice(0, 20),
+    authorEmail: user.email,
+    createdAt: serverTimestamp()
+  });
+}
+
+export async function removeForm(id: string) {
+  if (!ready() || !db) throw new Error("아직 저장소가 설정되지 않았습니다.");
+  await deleteDoc(doc(db, "forms", id));
 }

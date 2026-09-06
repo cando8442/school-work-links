@@ -1336,3 +1336,107 @@ img {
     font-size: 13px;
   }
 }
+
+/* 공유 드라이브 링크 고치기 */
+.drive-edit {
+  font-size: 13px;
+  color: var(--wine);
+  text-decoration: underline;
+}
+
+/* 부서 게시판 */
+.pt-board {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pt {
+  padding: 16px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.pt-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.pt-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.pt-meta {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.pt-body {
+  margin-bottom: 10px;
+  font-size: 15px;
+  color: var(--body);
+  white-space: pre-wrap;
+}
+
+/* 서식 목록 */
+.form-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.form-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.form-list a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  padding: 10px 14px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.form-list a:hover {
+  border-color: var(--brick);
+}
+
+.form-kind {
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--brick);
+  background: var(--paper-deep);
+  border-radius: 4px;
+}
+
+.form-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.form-list button {
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: underline;
+}
+
+.fm-hint {
+  margin-bottom: 10px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
+}

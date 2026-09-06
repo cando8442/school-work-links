@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { asset } from "@/lib/asset";
 import Calendar from "@/components/Calendar";
 import DutyEditor from "@/components/DutyEditor";
+import { DriveBar, FormList, PostBoard } from "@/components/DeptExtras";
 import InstallButton from "@/components/InstallButton";
 import TaskBoard from "@/components/TaskBoard";
 import { useSchoolUser } from "@/components/SchoolGate";
@@ -155,6 +156,11 @@ function HomeView() {
       </section>
 
       <section className="tasks">
+        <h2 className="sec-title">부서에서 올린 글</h2>
+        <PostBoard deptId={null} limit={5} />
+      </section>
+
+      <section className="tasks">
         <h2 className="sec-title">제출 현황</h2>
         <TaskBoard />
       </section>
@@ -184,7 +190,7 @@ function HomeView() {
 /* 부서 화면                              */
 /* ------------------------------------- */
 
-function DutyDetail({ duty, onBack }: { duty: Duty; onBack: () => void }) {
+function DutyDetail({ duty, deptId, onBack }: { duty: Duty; deptId: string; onBack: () => void }) {
   return (
     <article className="duty-detail">
       <button type="button" className="back-btn" onClick={onBack}>
@@ -232,6 +238,8 @@ function DutyDetail({ duty, onBack }: { duty: Duty; onBack: () => void }) {
         </section>
       ) : null}
 
+      <FormList deptId={deptId} dutyId={duty.id} />
+
       {duty.links && duty.links.length > 0 ? (
         <section className="duty-block">
           <h3>관련 문서·링크</h3>
@@ -261,18 +269,14 @@ function DeptView({ dept }: { dept: Department }) {
         {dept.subtitle ? <p>{dept.subtitle}</p> : null}
       </header>
 
-      {dept.drive ? (
-        <div className="drive-bar">
-          {dept.drive.url ? (
-            <a className="drive-btn" href={dept.drive.url} target="_blank" rel="noopener noreferrer">
-              부서 공유 드라이브 열기
-            </a>
-          ) : (
-            <span className="drive-empty">공유 드라이브 링크가 아직 등록되지 않았습니다.</span>
-          )}
-          {dept.drive.note ? <span className="drive-note">{dept.drive.note}</span> : null}
-        </div>
-      ) : null}
+      <DriveBar deptId={dept.id} note={dept.drive?.note} />
+
+      {open ? null : (
+        <section className="dept-block">
+          <h2 className="sec-title">부서 게시판</h2>
+          <PostBoard deptId={dept.id} />
+        </section>
+      )}
 
       {open ? null : (
         <section className="dept-block">
@@ -284,7 +288,7 @@ function DeptView({ dept }: { dept: Department }) {
       {open ? null : <h2 className="sec-title">업무분장</h2>}
 
       {open ? (
-        <DutyDetail duty={open} onBack={() => setOpenId(null)} />
+        <DutyDetail duty={open} deptId={dept.id} onBack={() => setOpenId(null)} />
       ) : dept.duties.length === 0 ? (
         <div className="dl-empty">아직 등록된 업무분장이 없습니다.</div>
       ) : (
