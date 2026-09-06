@@ -1605,3 +1605,22 @@ img {
   border-radius: 6px;
   background: var(--white);
 }
+
+
+/* 로고 그림이 없을 때 학교 이름 */
+.hd-name {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+/* 꼬리말 링크 */
+.ft-links {
+  margin-top: 8px;
+}
+
+.ft-links a {
+  color: var(--wine);
+  text-decoration: underline;
+}

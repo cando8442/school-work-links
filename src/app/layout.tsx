@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { SCHOOL } from "@/config/school";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
@@ -11,8 +12,8 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
-  title: "우리학교 부별공유",
-  description: "서울세종고등학교 부서별 업무분장과 마감 공지를 한곳에서 봅니다.",
+  title: `${SCHOOL.name} ${SCHOOL.siteName}`,
+  description: `${SCHOOL.name} 부서별 업무분장과 마감을 한곳에서 봅니다.`,
   manifest: `${basePath}/manifest.webmanifest`,
   icons: {
     icon: `${basePath}/assets/icon-192.png`,
@@ -20,12 +21,12 @@ export const metadata: Metadata = {
   },
   appleWebApp: {
     capable: true,
-    title: "부별공유",
+    title: SCHOOL.siteName,
     statusBarStyle: "default"
   },
   openGraph: {
-    title: "우리학교 부별공유",
-    description: "서울세종고등학교 부서별 업무분장과 마감 공지",
+    title: `${SCHOOL.name} ${SCHOOL.siteName}`,
+    description: `${SCHOOL.name} 부서별 업무분장과 마감`,
     images: [`${basePath}/assets/campus.png`]
   }
 };

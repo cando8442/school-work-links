@@ -1,7 +1,7 @@
 {
   "app": {
     "name": "우리학교 부별공유",
-    "url": "https://cando8442.github.io/school-work-links/",
+    "url": "https://seoulsejong-sharing.netlify.app/",
     "stack": "Next.js"
   },
   "tracks": [

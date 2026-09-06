@@ -8,6 +8,7 @@
    설정값(NEXT_PUBLIC_FIREBASE_*)이 없으면 로그인도 저장도 꺼진 채 읽기 전용으로 열립니다. */
 
 import { initializeApp, getApps, type FirebaseApp } from "firebase/app";
+import { SCHOOL, SCHOOL_DOMAIN_LIST } from "@/config/school";
 import {
   GoogleAuthProvider,
   getAuth,
@@ -44,10 +45,7 @@ const config = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
-export const SCHOOL_DOMAINS = (process.env.NEXT_PUBLIC_SCHOOL_DOMAIN ?? "seoulsejong.sen.hs.kr")
-  .split(",")
-  .map(d => d.trim().replace(/^@/, "").toLowerCase())
-  .filter(Boolean);
+export const SCHOOL_DOMAINS = SCHOOL_DOMAIN_LIST;
 
 /* 파이어베이스 설정이 있어야 로그인과 기록을 씁니다. */
 export const isSchoolLoginEnabled = Boolean(config.apiKey && config.projectId);
@@ -513,8 +511,9 @@ export async function removeForm(id: string) {
 /* 편집 권한                              */
 /* ------------------------------------- */
 
-/* 이 사람만 권한을 나눠 줄 수 있습니다. firestore.rules 의 OWNER 와 같아야 합니다. */
-export const OWNER_EMAIL = "cando8442@seoulsejong.sen.hs.kr";
+/* 이 사람만 권한을 나눠 줄 수 있습니다. firestore.rules 의 isOwner() 와 같아야 합니다.
+   값은 src/config/school.ts 에서 고칩니다. */
+export const OWNER_EMAIL: string = SCHOOL.ownerEmail;
 
 export type Admin = {
   email: string;

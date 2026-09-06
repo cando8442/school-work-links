@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
+import { SCHOOL } from "@/config/school";
 
 export const metadata: Metadata = {
-  title: "개인정보처리방침 | 우리학교 부별공유",
-  description: "서울세종고등학교 부별공유가 다루는 정보와 그 처리 방법을 밝힙니다."
+  title: `개인정보처리방침 | ${SCHOOL.name} ${SCHOOL.siteName}`,
+  description: `${SCHOOL.name} ${SCHOOL.siteName} 가 다루는 정보와 그 처리 방법을 밝힙니다.`
 };
 
 const UPDATED = "2026년 9월 6일";
-const MANAGER = "부별공유 관리자 (cando8442@seoulsejong.sen.hs.kr)";
+const MANAGER = `${SCHOOL.privacyManager} (${SCHOOL.ownerEmail})`;
 
 export default function PrivacyPage() {
   return (
@@ -16,7 +17,7 @@ export default function PrivacyPage() {
 
         <section className="duty-block">
           <p className="duty-summary">
-            부별공유는 서울세종고등학교 교직원이 부서 업무를 나누어 보기 위해 쓰는 내부용 웹 화면입니다.
+            {SCHOOL.siteName} 는 {SCHOOL.name} 교직원이 부서 업무를 나누어 보기 위해 쓰는 내부용 웹 화면입니다.
             학생의 개인정보는 수집하지도 처리하지도 않습니다. 아래에 무엇을 다루는지 그대로 밝힙니다.
           </p>
         </section>
@@ -45,7 +46,7 @@ export default function PrivacyPage() {
         <section className="duty-block">
           <h3>3. 안전조치</h3>
           <ul className="note-list">
-            <li>학교 도메인(@seoulsejong.sen.hs.kr) 계정으로 로그인한 사람만 볼 수 있습니다.</li>
+            <li>학교 도메인(@{SCHOOL.domain}) 계정으로 로그인한 사람만 볼 수 있습니다.</li>
             <li>
               화면에서 감추는 데 그치지 않고, 저장소 보안 규칙이 학교 계정이 아닌 요청을 서버에서
               막습니다.

@@ -1,71 +1,71 @@
 {
-  "at": "2026-09-06T06:35:44.191Z",
-  "url": "https://cando8442.github.io/school-work-links/",
+  "at": "2026-09-06T07:01:44.310Z",
+  "url": "https://seoulsejong-sharing.netlify.app/",
   "results": [
     {
       "id": "sec.header.csp",
       "status": "fail",
-      "observed": "누락: content-security-policy (missing)",
+      "observed": "무효하거나 약한 값: content-security-policy (script-src uses 'unsafe-inline' without a nonce or hash)",
       "evidence": {
         "header": "content-security-policy",
-        "value": null,
-        "validation": "missing",
-        "observedAt": "2026-09-06T06:35:36.389Z"
+        "value": "default-src 'self'; base-uri 'self'; object-src 'none'; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; script-src 'self' 'unsafe-inline' https://apis.google.com https://www.gstatic.com; worker-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests",
+        "validation": "script-src uses 'unsafe-inline' without a nonce or hash",
+        "observedAt": "2026-09-06T07:01:30.205Z"
       }
     },
     {
       "id": "sec.header.hsts",
       "status": "pass",
-      "observed": "strict-transport-security: max-age=31556952",
+      "observed": "strict-transport-security: max-age=31536000; includeSubDomains; preload",
       "evidence": {
         "header": "strict-transport-security",
-        "value": "max-age=31556952",
+        "value": "max-age=31536000; includeSubDomains; preload",
         "validation": "valid",
-        "observedAt": "2026-09-06T06:35:36.390Z"
+        "observedAt": "2026-09-06T07:01:30.206Z"
       }
     },
     {
       "id": "sec.header.frame",
-      "status": "fail",
-      "observed": "누락: x-frame-options (frame protection is missing)",
+      "status": "pass",
+      "observed": "x-frame-options: DENY",
       "evidence": {
         "header": "x-frame-options",
-        "value": null,
-        "validation": "frame protection is missing",
-        "observedAt": "2026-09-06T06:35:36.390Z"
+        "value": "DENY",
+        "validation": "CSP frame-ancestors",
+        "observedAt": "2026-09-06T07:01:30.206Z"
       }
     },
     {
       "id": "sec.header.nosniff",
-      "status": "fail",
-      "observed": "누락: x-content-type-options (missing)",
+      "status": "pass",
+      "observed": "x-content-type-options: nosniff",
       "evidence": {
         "header": "x-content-type-options",
-        "value": null,
-        "validation": "missing",
-        "observedAt": "2026-09-06T06:35:36.390Z"
+        "value": "nosniff",
+        "validation": "valid",
+        "observedAt": "2026-09-06T07:01:30.206Z"
       }
     },
     {
       "id": "sec.header.referrer",
-      "status": "fail",
-      "observed": "누락: referrer-policy (missing)",
+      "status": "pass",
+      "observed": "referrer-policy: strict-origin-when-cross-origin",
       "evidence": {
         "header": "referrer-policy",
-        "value": null,
-        "validation": "missing",
-        "observedAt": "2026-09-06T06:35:36.390Z"
+        "value": "strict-origin-when-cross-origin",
+        "validation": "valid",
+        "observedAt": "2026-09-06T07:01:30.206Z"
       }
     },
     {
       "id": "sec.header.permissions",
-      "status": "fail",
-      "observed": "누락: permissions-policy (missing)",
+      "status": "pass",
+      "observed": "permissions-policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()",
       "evidence": {
         "header": "permissions-policy",
-        "value": null,
-        "validation": "missing",
-        "observedAt": "2026-09-06T06:35:36.390Z"
+        "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
+        "validation": "valid",
+        "observedAt": "2026-09-06T07:01:30.206Z"
       }
     },
     {
@@ -74,16 +74,16 @@
       "observed": "x-powered-by 미노출(양호)",
       "evidence": {
         "poweredBy": null,
-        "server": "GitHub.com"
+        "server": "Netlify"
       }
     },
     {
       "id": "sec.transport.https-redirect",
-      "status": "fail",
-      "observed": "HTTP 요청이 HTTPS로 강제되지 않음 (HTTP 404)",
+      "status": "pass",
+      "observed": "HTTP 요청이 HTTPS로 리다이렉트됨 (HTTP 301 -> https://seoulsejong-sharing.netlify.app/)",
       "evidence": {
-        "httpProbe": "HTTP 404",
-        "redirectsHttps": false
+        "httpProbe": "HTTP 301 -> https://seoulsejong-sharing.netlify.app/",
+        "redirectsHttps": true
       }
     },
     {
@@ -94,8 +94,8 @@
         "protocol": "TLSv1.3",
         "authorized": true,
         "authError": null,
-        "validFrom": "Aug  2 23:38:02 2026 GMT",
-        "validTo": "Oct 31 23:38:01 2026 GMT"
+        "validFrom": "Feb 16 00:00:00 2026 GMT",
+        "validTo": "Mar 19 23:59:59 2027 GMT"
       }
     },
     {
@@ -120,27 +120,27 @@
         "probed": [
           {
             "path": "/.env",
-            "httpStatus": 404,
+            "httpStatus": 200,
             "exposed": false
           },
           {
             "path": "/.env.local",
-            "httpStatus": 404,
+            "httpStatus": 200,
             "exposed": false
           },
           {
             "path": "/.env.production",
-            "httpStatus": 404,
+            "httpStatus": 200,
             "exposed": false
           },
           {
             "path": "/.git/config",
-            "httpStatus": 404,
+            "httpStatus": 200,
             "exposed": false
           },
           {
             "path": "/.git/HEAD",
-            "httpStatus": 404,
+            "httpStatus": 200,
             "exposed": false
           }
         ],
@@ -181,13 +181,13 @@
     },
     {
       "id": "cors.policy",
-      "status": "info",
-      "observed": "와일드카드(*) 허용 — 공개 API면 무방, 인증 API면 위험",
+      "status": "pass",
+      "observed": "CORS가 임의 Origin을 허용하지 않음(양호)",
       "evidence": {
-        "allowOrigin": "*",
+        "allowOrigin": null,
         "allowCredentials": false,
-        "reflectsOrigin": false,
-        "wildcard": true
+        "reflectsOrigin": "",
+        "wildcard": false
       }
     },
     {
@@ -223,9 +223,9 @@
     {
       "id": "perf.ttfb",
       "status": "pass",
-      "observed": "응답 시간 384ms",
+      "observed": "응답 시간 724ms",
       "evidence": {
-        "ms": 384
+        "ms": 724
       }
     },
     {
@@ -233,31 +233,37 @@
       "status": "pass",
       "observed": "문서 크기 9KB",
       "evidence": {
-        "bytes": 9099
+        "bytes": 9121
       }
     },
     {
       "id": "perf.compression",
       "status": "pass",
-      "observed": "압축: gzip",
+      "observed": "압축: br",
       "evidence": {
-        "encoding": "gzip"
+        "encoding": "br"
       }
     },
     {
       "id": "legal.privacy-policy",
-      "status": "fail",
-      "observed": "개인정보처리방침 페이지/링크 없음",
+      "status": "pass",
+      "observed": "개인정보처리방침 발견(path: /privacy)",
       "evidence": {
-        "found": false
+        "found": true,
+        "via": "path",
+        "where": "/privacy",
+        "status": 301
       }
     },
     {
       "id": "legal.terms",
-      "status": "info",
-      "observed": "이용약관 페이지/링크 없음",
+      "status": "pass",
+      "observed": "이용약관 발견(path: /terms)",
       "evidence": {
-        "found": false
+        "found": true,
+        "via": "path",
+        "where": "/terms",
+        "status": 200
       }
     },
     {
@@ -311,11 +317,32 @@
     {
       "id": "code.headers-config",
       "status": "info",
-      "observed": "헤더 설정 파일에서 보안 헤더 설정을 못 찾음(라이브 관측을 우선 신뢰)",
+      "observed": "헤더 설정 발견: content-security-policy, strict-transport-security, x-frame-options, x-content-type-options, referrer-policy, permissions-policy",
       "evidence": {
-        "configuredHeaders": {},
+        "configuredHeaders": {
+          "content-security-policy": [
+            "public\\_headers"
+          ],
+          "strict-transport-security": [
+            "public\\_headers"
+          ],
+          "x-frame-options": [
+            "public\\_headers"
+          ],
+          "x-content-type-options": [
+            "public\\_headers"
+          ],
+          "referrer-policy": [
+            "public\\_headers"
+          ],
+          "permissions-policy": [
+            "public\\_headers"
+          ]
+        },
         "filesScanned": [
-          "next.config.ts"
+          "netlify.toml",
+          "next.config.ts",
+          "public\\_headers"
         ]
       }
     },
@@ -398,39 +425,39 @@
       "id": "sec.header.hsts.long",
       "points": 5,
       "observed": "HSTS max-age >= 180일"
+    },
+    {
+      "id": "sec.header.referrer.strict",
+      "points": 5,
+      "observed": "Referrer 엄격"
     }
   ],
   "raw": {
-    "url": "https://cando8442.github.io/school-work-links/",
-    "finalUrl": "https://cando8442.github.io/school-work-links/",
+    "url": "https://seoulsejong-sharing.netlify.app/",
+    "finalUrl": "https://seoulsejong-sharing.netlify.app/",
     "httpStatus": 200,
-    "ttfbMs": 384,
+    "ttfbMs": 724,
     "observedHeaders": [
       "accept-ranges",
-      "access-control-allow-origin",
       "age",
       "cache-control",
-      "connection",
+      "cache-status",
       "content-encoding",
-      "content-length",
+      "content-security-policy",
       "content-type",
       "date",
       "etag",
-      "expires",
-      "last-modified",
+      "netlify-hosting",
+      "permissions-policy",
+      "referrer-policy",
       "server",
       "strict-transport-security",
+      "transfer-encoding",
       "vary",
-      "via",
-      "x-cache",
-      "x-cache-hits",
-      "x-fastly-request-id",
-      "x-github-edge-region",
-      "x-github-request-id",
-      "x-proxy-cache",
-      "x-served-by",
-      "x-timer"
+      "x-content-type-options",
+      "x-frame-options",
+      "x-nf-request-id"
     ],
-    "scannedAt": "2026-09-06T06:35:41.976Z"
+    "scannedAt": "2026-09-06T07:01:36.431Z"
   }
 }

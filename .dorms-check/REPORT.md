@@ -1,19 +1,24 @@
 # dorms-check 점검 리포트
 
 - 앱: 우리학교 부별공유
-- 주소: https://cando8442.github.io/school-work-links/ 
+- 주소: https://seoulsejong-sharing.netlify.app/ 
 - 스택: Next.js
 - 점검 트랙: security, edzip
 
 > 이 리포트는 dorms-check(코치)의 자체 점검 결과입니다. 최종 인증마크는 도름스 서버가 스스로 다시 검증해 발급하며, 이 리포트의 통과가 마크를 보장하지 않습니다.
 
 ## 보안 검토
-- 점수: 55/100 (F)
+- 점수: 98/100 (A+)
 - 마크 자격(critical/high 0): 미충족
 
 ### 통과 항목(증빙)
-- [v] Strict-Transport-Security — 헤더값: max-age=31556952
+- [v] Strict-Transport-Security — 헤더값: max-age=31536000; includeSubDomains; preload
+- [v] 클릭재킹 방어(X-Frame-Options / frame-ancestors) — 헤더값: DENY
+- [v] X-Content-Type-Options: nosniff — 헤더값: nosniff
+- [v] Referrer-Policy — 헤더값: strict-origin-when-cross-origin
+- [v] Permissions-Policy — 헤더값: camera=(), microphone=(), geolocation=(), payment=(), usb=()
 - [v] 서버/프레임워크 버전 노출 — x-powered-by 미노출(양호)
+- [v] HTTPS 강제(HTTP→HTTPS 리다이렉트) — HTTP 요청이 HTTPS로 리다이렉트됨 (HTTP 301 -> https://seoulsejong-sharing.netlify.app/)
 - [v] SSL 인증서 유효 — TLS 연결 성공 (TLSv1.3)
 - [v] 구버전 TLS 미사용 — TLS 버전 양호: TLSv1.3
 - [v] 민감 파일 노출(.env/.git) — 민감 파일(.env/.git) 노출 없음
@@ -21,13 +26,16 @@
 - [v] 소스맵 노출 — 소스맵 참조 없음
 - [v] 에러 스택트레이스 노출 — 스택트레이스 노출 없음
 - [v] Mixed Content — mixed content 없음
+- [v] CORS 설정 — CORS가 임의 Origin을 허용하지 않음(양호)
 - [v] 페이지 제목 — <title> 있음
 - [v] 설명 메타 — 설명 메타
 - [v] 모바일 viewport — viewport 메타
 - [v] Open Graph — Open Graph 태그
-- [v] 응답 속도 — 응답 시간 384ms
+- [v] 응답 속도 — 응답 시간 724ms
 - [v] 문서 크기 — 문서 크기 9KB
-- [v] 압축 — 압축: gzip
+- [v] 압축 — 압축: br
+- [v] 개인정보처리방침 — 개인정보처리방침 발견(path: /privacy)
+- [v] 이용약관 — 이용약관 발견(path: /terms)
 - [v] 연락처 — 연락처/문의 정보 있음
 - [v] 하드코딩 시크릿 — 하드코딩 시크릿 미검출
 - [v] 클라이언트 시크릿 노출 — 클라 시크릿 노출 미검출
@@ -35,49 +43,17 @@
 ### 아직 고쳐야 할 항목
 #### [high] Content-Security-Policy
 - 무엇: 외부에서 내 페이지에 악성 스크립트를 끼워넣는 공격(XSS)을 막는 기본 규칙이 없어요.
-- 지금 상태: 누락: content-security-policy (missing)
+- 지금 상태: 무효하거나 약한 값: content-security-policy (script-src uses 'unsafe-inline' without a nonce or hash)
 - AI에게 이렇게 시켜주세요: `내 Next.js 앱의 모든 응답에 Content-Security-Policy 헤더를 넣어줘. Next.js면 middleware.ts에서 설정하고 최소한 default-src 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self' 를 포함해줘. 인라인 스크립트가 필요하면 nonce 방식으로 허용해줘.`
 
-#### [high] HTTPS 강제(HTTP→HTTPS 리다이렉트)
-- 무엇: http로 들어와도 암호화된 https로 자동 전환되지 않아, 중간에서 내용이 새거나 조작될 수 있어요.
-- 지금 상태: HTTP 요청이 HTTPS로 강제되지 않음 (HTTP 404)
-- AI에게 이렇게 시켜주세요: `Next.js 앱에서 http 요청을 https 로 강제 리다이렉트하도록 설정해줘.`
-
-#### [high] 개인정보처리방침
-- 무엇: 개인정보를 다루는 서비스는 개인정보처리방침을 반드시 공개해야 해요(개인정보 보호법 제30조).
-- 지금 상태: 개인정보처리방침 페이지/링크 없음
-- AI에게 이렇게 시켜주세요: `개인정보처리방침 페이지(/privacy)를 만들어 링크를 노출해줘. dorms-check templates/privacy-policy.ko.md 를 골격으로 실제 수집 항목에 맞게 채워줘.`
-
-#### [medium] 클릭재킹 방어(X-Frame-Options / frame-ancestors)
-- 무엇: 내 화면을 남의 사이트가 몰래 안에 띄워 클릭을 가로채는 공격을 막는 설정이 없어요.
-- 지금 상태: 누락: x-frame-options (frame protection is missing)
-- AI에게 이렇게 시켜주세요: `Next.js 앱에 X-Frame-Options: DENY 헤더(또는 CSP frame-ancestors 'none')를 추가해줘.`
-
-#### [low] X-Content-Type-Options: nosniff
-- 무엇: 브라우저가 파일 종류를 멋대로 추측해 생기는 공격을 막는 설정이 없어요.
-- 지금 상태: 누락: x-content-type-options (missing)
-- AI에게 이렇게 시켜주세요: `Next.js 앱 응답에 X-Content-Type-Options: nosniff 헤더를 추가해줘.`
-
-#### [low] Referrer-Policy
-- 무엇: 다른 사이트로 이동할 때 내 주소 정보가 과하게 새는 걸 막는 설정이 없어요.
-- 지금 상태: 누락: referrer-policy (missing)
-- AI에게 이렇게 시켜주세요: `Next.js 앱에 Referrer-Policy: strict-origin-when-cross-origin 헤더를 추가해줘.`
-
-#### [low] Permissions-Policy
-- 무엇: 카메라·위치 같은 브라우저 권한 사용을 제한하는 설정이 없어요.
-- 지금 상태: 누락: permissions-policy (missing)
-- AI에게 이렇게 시켜주세요: `Next.js 앱에 필요한 기능만 허용하는 Permissions-Policy 헤더를 추가해줘(예: camera=(), geolocation=()).`
-
 ### 참고(검토 권장, 마크 게이트 아님)
-- CORS 설정: 와일드카드(*) 허용 — 공개 API면 무방, 인증 API면 위험
 - canonical: canonical 링크
-- 이용약관: 이용약관 페이지/링크 없음
-- 헤더 설정 위치: 헤더 설정 파일에서 보안 헤더 설정을 못 찾음(라이브 관측을 우선 신뢰)
+- 헤더 설정 위치: 헤더 설정 발견: content-security-policy, strict-transport-security, x-frame-options, x-content-type-options, referrer-policy, permissions-policy
 - 위험 코드 패턴(검토 후보): 검토가 필요한 위험 패턴 2건(문맥 확인 필요)
 
 ## 에듀집 제출·통과 준비(필수기준)
 - 준비 상태: 미충족
-- 개인정보처리방침 공개: 없음
+- 개인정보처리방침 공개: 있음
 
 ### 아직 준비할 항목
 #### 개인정보를 최소한으로만 수집 (1. 최소처리 원칙)

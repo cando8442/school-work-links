@@ -20,6 +20,7 @@ import {
   type SchoolEvent
 } from "@/lib/school";
 import { boardPosts } from "@/config/linktree";
+import { SCHOOL } from "@/config/school";
 import { departments, notices, type Department, type Duty, type Notice } from "@/config/departments";
 
 const HOME = "home";
@@ -327,7 +328,7 @@ function HomeView() {
     <>
       <section className="hero">
         <div className="hero-text">
-          <h1>부별공유</h1>
+          <h1>{SCHOOL.siteName}</h1>
           <p>부서별 업무분장과 마감을 한곳에서 봅니다. 자료는 구글 문서와 시트에 두고 여기에는 링크만 겁니다.</p>
         </div>
       </section>
@@ -598,8 +599,12 @@ export default function LinkTree() {
       <header className="hd">
         <div className="hd-in">
           <div className="hd-brand">
-            <img src={asset("/assets/school-logo.png")} alt="서울세종고등학교" />
-            <span className="hd-sub">부별공유</span>
+            {SCHOOL.logo ? (
+              <img src={asset(SCHOOL.logo)} alt={SCHOOL.name} />
+            ) : (
+              <span className="hd-name">{SCHOOL.name}</span>
+            )}
+            <span className="hd-sub">{SCHOOL.siteName}</span>
           </div>
           <div className="hd-right">
             <SignedIn />
@@ -635,8 +640,21 @@ export default function LinkTree() {
       </main>
 
       <footer className="ft">
-        <p>서울세종고등학교 부별공유. 자료는 구글 드라이브에 두고 이곳에는 링크만 올립니다.</p>
+        <p>
+          {SCHOOL.name} {SCHOOL.siteName}. 자료는 구글 드라이브에 두고 이곳에는 링크만 올립니다.
+        </p>
         <p className="ft-warn">학생 개인정보와 대외비 문서는 이 사이트에 직접 적지 않습니다.</p>
+        <p className="ft-links">
+          <a href="./privacy/">개인정보처리방침</a>
+          {SCHOOL.dormsUrl ? (
+            <>
+              {" · "}
+              <a href={SCHOOL.dormsUrl} target="_blank" rel="noopener noreferrer">
+                도름스 커뮤니티 나의 활동
+              </a>
+            </>
+          ) : null}
+        </p>
       </footer>
     </div>
   );
