@@ -4,12 +4,13 @@ import { useEffect, useMemo, useState } from "react";
 import { asset } from "@/lib/asset";
 import Calendar from "@/components/Calendar";
 import AdminPanel from "@/components/AdminPanel";
+import ScheduleImport from "@/components/ScheduleImport";
 import DutyEditor from "@/components/DutyEditor";
 import { DriveBar, FormList, PostBoard } from "@/components/DeptExtras";
 import InstallButton from "@/components/InstallButton";
 import TaskBoard from "@/components/TaskBoard";
 import { useSchoolUser } from "@/components/SchoolGate";
-import { isSchoolLoginEnabled } from "@/lib/school";
+import { isSchoolLoginEnabled, watchEvents, type SchoolEvent } from "@/lib/school";
 import { boardPosts } from "@/config/linktree";
 import { departments, notices, type Department, type Duty, type Notice } from "@/config/departments";
 
@@ -78,7 +79,32 @@ function DeadlineRow({ notice }: { notice: Notice }) {
 }
 
 function HomeView() {
-  const sorted = useMemo(() => [...notices].sort((a, b) => a.due.localeCompare(b.due)), []);
+  const [events, setEvents] = useState<SchoolEvent[]>([]);
+
+  useEffect(() => watchEvents(setEvents), []);
+
+  /* 달력에는 코드에 적힌 마감과 가져온 학사일정을 함께 보여 줍니다. */
+  const calendarItems = useMemo<Notice[]>(
+    () => [
+      ...notices,
+      ...events.map(e => ({
+        id: e.id,
+        due: e.date,
+        dept: e.dept || (e.kind === "deadline" ? "마감" : "학사일정"),
+        title: e.title,
+        detail: e.detail
+      }))
+    ],
+    [events]
+  );
+
+  /* 마감 목록에는 마감으로 표시한 것만 넣습니다. */
+  const sorted = useMemo(() => {
+    const fromEvents: Notice[] = events
+      .filter(e => e.kind === "deadline")
+      .map(e => ({ id: e.id, due: e.date, dept: e.dept || "마감", title: e.title, detail: e.detail }));
+    return [...notices, ...fromEvents].sort((a, b) => a.due.localeCompare(b.due));
+  }, [events]);
 
   const overdue = sorted.filter(n => daysLeft(n.due) < 0);
   const todayList = sorted.filter(n => daysLeft(n.due) === 0);
@@ -100,7 +126,7 @@ function HomeView() {
       <section className="board">
         <div className="board-col">
           <h2 className="sec-title">이달의 마감</h2>
-          <Calendar notices={notices} />
+          <Calendar notices={calendarItems} />
         </div>
 
         <div className="board-col">
@@ -165,6 +191,8 @@ function HomeView() {
         <h2 className="sec-title">제출 현황</h2>
         <TaskBoard />
       </section>
+
+      <ScheduleImport events={events} />
 
       <AdminPanel />
 

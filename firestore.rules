@@ -111,6 +111,18 @@ service cloud.firestore {
       allow update, delete: if isAuthor() && canEditDept(resource.data.deptId);
     }
 
+    /* 학사일정과 마감입니다. 권한자만 넣고 지울 수 있습니다. */
+    match /events/{eventId} {
+      allow read: if schoolAccount();
+      allow create: if (isOwner() || isEditor())
+        && request.resource.data.authorEmail == request.auth.token.email
+        && request.resource.data.date is string
+        && request.resource.data.title is string
+        && request.resource.data.title.size() >= 1
+        && request.resource.data.title.size() <= 60;
+      allow update, delete: if isOwner() || isEditor();
+    }
+
     /* 편집 권한 명단입니다. 문서 아이디가 학교 계정 주소입니다.
        읽기는 로그인한 학교 계정이면 되고, 주고 빼는 것은 최초 관리자만 합니다. */
     match /admins/{adminEmail} {

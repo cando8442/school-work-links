@@ -572,3 +572,81 @@ export async function removeAdmin(email: string) {
   if (!ready() || !db) throw new Error("아직 저장소가 설정되지 않았습니다.");
   await deleteDoc(doc(db, "admins", email));
 }
+
+/* ------------------------------------- */
+/* 학사일정과 마감                         */
+/* ------------------------------------- */
+
+/* kind
+     schedule : 학사일정. 달력에만 표시합니다.
+     deadline : 마감. 달력과 마감 목록에 함께 표시합니다. */
+export type SchoolEvent = {
+  id: string;
+  date: string;
+  title: string;
+  kind: "schedule" | "deadline";
+  dept: string;
+  detail: string;
+  authorEmail: string;
+};
+
+export type EventInput = {
+  date: string;
+  title: string;
+  kind: "schedule" | "deadline";
+  dept: string;
+  detail: string;
+};
+
+export function watchEvents(onData: (events: SchoolEvent[]) => void) {
+  if (!ready() || !db) {
+    onData([]);
+    return () => {};
+  }
+  return onSnapshot(collection(db, "events"), snapshot => {
+    const list = snapshot.docs.map(d => {
+      const data = d.data() as Record<string, unknown>;
+      return {
+        id: d.id,
+        date: String(data.date ?? ""),
+        title: String(data.title ?? ""),
+        kind: (data.kind === "deadline" ? "deadline" : "schedule") as "schedule" | "deadline",
+        dept: String(data.dept ?? ""),
+        detail: String(data.detail ?? ""),
+        authorEmail: String(data.authorEmail ?? "")
+      };
+    });
+    list.sort((a, b) => a.date.localeCompare(b.date));
+    onData(list);
+  });
+}
+
+function cleanEvent(input: EventInput, user: SchoolUser) {
+  return {
+    date: input.date.trim(),
+    title: input.title.trim().slice(0, LIMITS.title),
+    kind: input.kind === "deadline" ? "deadline" : "schedule",
+    dept: input.dept.trim().slice(0, LIMITS.owner),
+    detail: input.detail.trim().slice(0, LIMITS.summary),
+    authorEmail: user.email
+  };
+}
+
+/* 여러 건을 한 번에 넣습니다. 붙여넣기로 들어온 학사일정을 저장할 때 씁니다. */
+export async function addEvents(inputs: EventInput[], user: SchoolUser) {
+  if (!ready() || !db) throw new Error("아직 저장소가 설정되지 않았습니다.");
+  const rows = inputs
+    .map(i => cleanEvent(i, user))
+    .filter(r => /^\d{4}-\d{2}-\d{2}$/.test(r.date) && r.title);
+  if (rows.length === 0) throw new Error("넣을 수 있는 줄이 없습니다. 날짜와 내용을 확인해 주세요.");
+
+  for (const row of rows) {
+    await addDoc(collection(db, "events"), { ...row, createdAt: serverTimestamp() });
+  }
+  return rows.length;
+}
+
+export async function removeEvent(id: string) {
+  if (!ready() || !db) throw new Error("아직 저장소가 설정되지 않았습니다.");
+  await deleteDoc(doc(db, "events", id));
+}

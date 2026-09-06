@@ -1457,3 +1457,16 @@ img {
   border: 1px solid var(--line);
   border-radius: 8px;
 }
+
+/* 등록된 일정 접기 */
+.ev-list {
+  margin-top: 12px;
+}
+
+.ev-list summary {
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--wine);
+  padding: 8px 0;
+}
