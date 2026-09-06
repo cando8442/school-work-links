@@ -12,6 +12,7 @@ import TaskBoard from "@/components/TaskBoard";
 import { useSchoolUser } from "@/components/SchoolGate";
 import {
   isSchoolLoginEnabled,
+  removeEvent,
   setEventLinks,
   watchEvents,
   type SavedLink,
@@ -73,6 +74,7 @@ function DeadlineRow({ notice, event }: { notice: Notice; event?: SchoolEvent })
   const [editing, setEditing] = useState(false);
   const [rows, setRows] = useState<SavedLink[]>([{ label: "", href: "" }]);
   const [busy, setBusy] = useState(false);
+  const [confirming, setConfirming] = useState(false);
 
   const left = daysLeft(notice.due);
   const links = event?.links ?? [];
@@ -130,9 +132,33 @@ function DeadlineRow({ notice, event }: { notice: Notice; event?: SchoolEvent })
             )}
 
             {mine && !editing ? (
-              <button type="button" className="dl-edit" onClick={startEdit}>
-                시트와 서식 링크 걸기
-              </button>
+              <span className="dl-tools">
+                <button type="button" className="dl-edit" onClick={startEdit}>
+                  시트와 서식 링크 걸기
+                </button>
+
+                {!confirming ? (
+                  <button type="button" className="dl-del" onClick={() => setConfirming(true)}>
+                    이 마감 지우기
+                  </button>
+                ) : (
+                  <span className="dl-confirm">
+                    정말 지울까요?
+                    <button
+                      type="button"
+                      className="dl-del"
+                      onClick={() => {
+                        if (event) void removeEvent(event.id);
+                      }}
+                    >
+                      지웁니다
+                    </button>
+                    <button type="button" className="fm-cancel" onClick={() => setConfirming(false)}>
+                      그대로 둡니다
+                    </button>
+                  </span>
+                )}
+              </span>
             ) : null}
 
             {mine && editing ? (

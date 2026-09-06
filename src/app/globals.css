@@ -1563,3 +1563,33 @@ img {
   align-items: center;
   gap: 10px;
 }
+
+
+/* 마감 지우기 */
+.dl-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+.dl-del {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--crimson);
+  text-decoration: underline;
+}
+
+.dl-confirm {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--body);
+}
+
+.dl-confirm .fm-cancel {
+  padding: 0;
+  font-size: 13px;
+}
