@@ -82,6 +82,7 @@ export default function InstallButton() {
           <ol className="ib-guide-steps">
             <li>아래 버튼을 눌러 바로가기 파일을 내려받습니다.</li>
             <li>내려받은 파일을 바탕화면으로 끌어다 놓습니다.</li>
+            <li>바탕화면 아이콘을 두 번 누르면 로그인 화면이 열립니다.</li>
           </ol>
           <button type="button" className="ib-guide-download" onClick={downloadShortcut}>
             바로가기 파일 내려받기

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { asset } from "@/lib/asset";
 import Calendar from "@/components/Calendar";
+import AdminPanel from "@/components/AdminPanel";
 import DutyEditor from "@/components/DutyEditor";
 import { DriveBar, FormList, PostBoard } from "@/components/DeptExtras";
 import InstallButton from "@/components/InstallButton";
@@ -164,6 +165,8 @@ function HomeView() {
         <h2 className="sec-title">제출 현황</h2>
         <TaskBoard />
       </section>
+
+      <AdminPanel />
 
       {boardPosts.length > 0 ? (
         <section className="links">

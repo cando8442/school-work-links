@@ -508,3 +508,67 @@ export async function removeForm(id: string) {
   if (!ready() || !db) throw new Error("아직 저장소가 설정되지 않았습니다.");
   await deleteDoc(doc(db, "forms", id));
 }
+
+/* ------------------------------------- */
+/* 편집 권한                              */
+/* ------------------------------------- */
+
+/* 이 사람만 권한을 나눠 줄 수 있습니다. firestore.rules 의 OWNER 와 같아야 합니다. */
+export const OWNER_EMAIL = "cando8442@seoulsejong.sen.hs.kr";
+
+export type Admin = {
+  email: string;
+  name: string;
+  /* 비워 두면 모든 부서를 편집할 수 있습니다. */
+  dept: string;
+};
+
+export function watchAdmins(onData: (admins: Admin[]) => void) {
+  if (!ready() || !db) {
+    onData([]);
+    return () => {};
+  }
+  return onSnapshot(collection(db, "admins"), snapshot => {
+    onData(
+      snapshot.docs.map(d => {
+        const data = d.data() as Record<string, unknown>;
+        return {
+          email: d.id,
+          name: String(data.name ?? ""),
+          dept: String(data.dept ?? "")
+        };
+      })
+    );
+  });
+}
+
+/* 내 권한 한 건만 봅니다. 없으면 null 입니다. */
+export function watchMyRole(email: string, onData: (admin: Admin | null) => void) {
+  if (!ready() || !db || !email) {
+    onData(null);
+    return () => {};
+  }
+  return onSnapshot(
+    doc(db, "admins", email),
+    snapshot => {
+      const data = snapshot.data() as Record<string, unknown> | undefined;
+      onData(data ? { email, name: String(data.name ?? ""), dept: String(data.dept ?? "") } : null);
+    },
+    () => onData(null)
+  );
+}
+
+export async function addAdmin(email: string, name: string, dept: string) {
+  if (!ready() || !db) throw new Error("아직 저장소가 설정되지 않았습니다.");
+  const clean = email.trim().toLowerCase();
+  if (!isSchoolEmail(clean)) throw new Error("학교 계정 주소만 등록할 수 있습니다.");
+  await setDoc(doc(db, "admins", clean), {
+    name: name.trim().slice(0, LIMITS.owner),
+    dept: dept.trim()
+  });
+}
+
+export async function removeAdmin(email: string) {
+  if (!ready() || !db) throw new Error("아직 저장소가 설정되지 않았습니다.");
+  await deleteDoc(doc(db, "admins", email));
+}

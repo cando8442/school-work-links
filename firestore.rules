@@ -17,6 +17,25 @@ service cloud.firestore {
         && request.auth.token.email.matches('.*@seoulsejong[.]sen[.]hs[.]kr$');
     }
 
+    /* 편집 권한을 가진 사람입니다. admins 모음에 이메일로 등록되어 있어야 합니다. */
+    function isOwner() {
+      return schoolAccount() && request.auth.token.email == 'cando8442@seoulsejong.sen.hs.kr';
+    }
+
+    function adminData() {
+      return get(/databases/$(database)/documents/admins/$(request.auth.token.email)).data;
+    }
+
+    function isEditor() {
+      return schoolAccount()
+        && exists(/databases/$(database)/documents/admins/$(request.auth.token.email));
+    }
+
+    /* 담당 부서가 비어 있으면 모든 부서를, 정해져 있으면 그 부서만 고칠 수 있습니다. */
+    function canEditDept(deptId) {
+      return isOwner() || (isEditor() && (adminData().dept == '' || adminData().dept == deptId));
+    }
+
     function isAuthor() {
       return schoolAccount() && resource.data.authorEmail == request.auth.token.email;
     }
@@ -24,7 +43,7 @@ service cloud.firestore {
     match /duties/{dutyId} {
       allow read: if schoolAccount();
 
-      allow create: if schoolAccount()
+      allow create: if canEditDept(request.resource.data.deptId)
         && request.resource.data.authorEmail == request.auth.token.email
         && request.resource.data.title is string
         && request.resource.data.title.size() >= 1
@@ -33,10 +52,10 @@ service cloud.firestore {
         && request.resource.data.routines.size() <= 10
         && request.resource.data.links.size() <= 10;
 
-      allow update: if isAuthor()
+      allow update: if isAuthor() && canEditDept(resource.data.deptId)
         && request.resource.data.authorEmail == resource.data.authorEmail;
 
-      allow delete: if isAuthor();
+      allow delete: if isAuthor() && canEditDept(resource.data.deptId);
     }
 
     match /tasks/{taskId} {
@@ -64,7 +83,7 @@ service cloud.firestore {
 
     match /depts/{deptId} {
       allow read: if schoolAccount();
-      allow write: if schoolAccount()
+      allow write: if canEditDept(deptId)
         && request.resource.data.keys().hasOnly(['driveUrl', 'updatedBy'])
         && request.resource.data.updatedBy == request.auth.token.email;
     }
@@ -83,13 +102,24 @@ service cloud.firestore {
 
     match /forms/{formId} {
       allow read: if schoolAccount();
-      allow create: if schoolAccount()
+      allow create: if canEditDept(request.resource.data.deptId)
         && request.resource.data.authorEmail == request.auth.token.email
         && request.resource.data.label is string
         && request.resource.data.label.size() >= 1
         && request.resource.data.label.size() <= 40
         && request.resource.data.href is string;
-      allow update, delete: if isAuthor();
+      allow update, delete: if isAuthor() && canEditDept(resource.data.deptId);
+    }
+
+    /* 편집 권한 명단입니다. 문서 아이디가 학교 계정 주소입니다.
+       읽기는 로그인한 학교 계정이면 되고, 주고 빼는 것은 최초 관리자만 합니다. */
+    match /admins/{adminEmail} {
+      allow read: if schoolAccount();
+      allow write: if isOwner()
+        && (request.method == 'delete'
+            || (request.resource.data.keys().hasOnly(['name', 'dept'])
+                && request.resource.data.name is string
+                && request.resource.data.dept is string));
     }
 
     /* 그 밖의 모든 경로는 차단합니다. */

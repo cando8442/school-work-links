@@ -29,7 +29,7 @@ import {
 /* ------------------------------------- */
 
 export function DriveBar({ deptId, note }: { deptId: string; note?: string }) {
-  const { user } = useSchoolUser();
+  const { user, canEdit } = useSchoolUser();
   const [url, setUrl] = useState("");
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState("");
@@ -83,7 +83,7 @@ export function DriveBar({ deptId, note }: { deptId: string; note?: string }) {
         <span className="drive-empty">공유 드라이브 링크가 아직 등록되지 않았습니다.</span>
       )}
       {note ? <span className="drive-note">{note}</span> : null}
-      {isSchoolLoginEnabled && user ? (
+      {isSchoolLoginEnabled && canEdit(deptId) ? (
         <button
           type="button"
           className="drive-edit"
@@ -276,7 +276,7 @@ export function PostBoard({ deptId, limit }: { deptId: string | null; limit?: nu
 /* ------------------------------------- */
 
 export function FormList({ deptId, dutyId }: { deptId: string; dutyId: string }) {
-  const { user } = useSchoolUser();
+  const { user, canEdit } = useSchoolUser();
   const [forms, setForms] = useState<SavedForm[]>([]);
   const [adding, setAdding] = useState(false);
   const [label, setLabel] = useState("");
@@ -317,7 +317,7 @@ export function FormList({ deptId, dutyId }: { deptId: string; dutyId: string })
                 <span className="form-kind">{form.kind || "파일"}</span>
                 <span className="form-label">{form.label}</span>
               </a>
-              {user?.email === form.authorEmail ? (
+              {user?.email === form.authorEmail && canEdit(deptId) ? (
                 <button
                   type="button"
                   onClick={() => {
@@ -332,7 +332,7 @@ export function FormList({ deptId, dutyId }: { deptId: string; dutyId: string })
         </ul>
       )}
 
-      {user ? (
+      {canEdit(deptId) ? (
         adding ? (
           <div className="fm">
             <label className="fm-row">

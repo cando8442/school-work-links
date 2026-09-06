@@ -178,9 +178,9 @@ function DutyForm({
 }
 
 function SavedDutyCard({ duty }: { duty: SavedDuty }) {
-  const { user } = useSchoolUser();
+  const { user, canEdit } = useSchoolUser();
   const [editing, setEditing] = useState(false);
-  const mine = user?.email === duty.authorEmail;
+  const mine = user?.email === duty.authorEmail && canEdit(duty.deptId);
 
   if (editing) {
     return (
@@ -241,7 +241,7 @@ function SavedDutyCard({ duty }: { duty: SavedDuty }) {
 }
 
 export default function DutyEditor({ deptId }: { deptId: string }) {
-  const { user } = useSchoolUser();
+  const { canEdit } = useSchoolUser();
   const [duties, setDuties] = useState<SavedDuty[]>([]);
   const [adding, setAdding] = useState(false);
 
@@ -255,12 +255,12 @@ export default function DutyEditor({ deptId }: { deptId: string }) {
         <SavedDutyCard key={duty.id} duty={duty} />
       ))}
 
-      {user ? (
+      {canEdit(deptId) ? (
         adding ? (
           <DutyForm deptId={deptId} onClose={() => setAdding(false)} />
         ) : (
           <button type="button" className="add-btn" onClick={() => setAdding(true)}>
-            + 내 업무 적기
+            + 업무분장 적기
           </button>
         )
       ) : null}

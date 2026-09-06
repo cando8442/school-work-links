@@ -1440,3 +1440,20 @@ img {
   line-height: 1.6;
   color: var(--muted);
 }
+
+/* 로그인 화면의 바로가기 버튼 */
+.sg-install {
+  margin-top: 6px;
+}
+
+/* 권한 명단 한 줄 */
+.admin-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  padding: 10px 14px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}

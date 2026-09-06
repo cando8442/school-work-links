@@ -7,21 +7,37 @@
    파이어베이스 설정이 없으면 문지기 없이 읽기 전용으로 열립니다. */
 
 import { createContext, useContext, useEffect, useState } from "react";
+import InstallButton from "@/components/InstallButton";
 import {
+  OWNER_EMAIL,
   SCHOOL_DOMAINS,
   isSchoolLoginEnabled,
   signInWithSchool,
   signOutSchool,
+  watchMyRole,
   watchUser,
+  type Admin,
   type SchoolUser
 } from "@/lib/school";
 
 type GateValue = {
   user: SchoolUser | null;
+  /* 편집 권한입니다. 등록되지 않았으면 null 입니다. */
+  role: Admin | null;
+  /* 권한을 나눠 줄 수 있는 사람인지입니다. */
+  isOwner: boolean;
+  /* 이 부서의 업무분장·서식·드라이브 링크를 고칠 수 있는지입니다. */
+  canEdit: (deptId?: string) => boolean;
   signOut: () => void;
 };
 
-const SchoolUserContext = createContext<GateValue>({ user: null, signOut: () => {} });
+const SchoolUserContext = createContext<GateValue>({
+  user: null,
+  role: null,
+  isOwner: false,
+  canEdit: () => false,
+  signOut: () => {}
+});
 
 export function useSchoolUser() {
   return useContext(SchoolUserContext);
@@ -29,9 +45,17 @@ export function useSchoolUser() {
 
 export default function SchoolGate({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<SchoolUser | null>(null);
+  const [role, setRole] = useState<Admin | null>(null);
   const [checked, setChecked] = useState(!isSchoolLoginEnabled);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  /* 바탕화면 앱으로 설치되게 하는 서비스워커입니다. 로그인 전에도 등록해 둡니다. */
+  useEffect(() => {
+    if (!("serviceWorker" in navigator)) return;
+    const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+    navigator.serviceWorker.register(`${base}/sw.js`, { scope: `${base}/` }).catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (!isSchoolLoginEnabled) return;
@@ -41,8 +65,28 @@ export default function SchoolGate({ children }: { children: React.ReactNode }) 
     });
   }, []);
 
+  /* 로그인한 사람의 편집 권한을 지켜봅니다. */
+  useEffect(() => {
+    if (!isSchoolLoginEnabled || !user) {
+      setRole(null);
+      return;
+    }
+    return watchMyRole(user.email, setRole);
+  }, [user]);
+
+  const isOwner = user?.email === OWNER_EMAIL;
+
   const value: GateValue = {
     user,
+    role,
+    isOwner,
+    canEdit: (deptId?: string) => {
+      if (!user) return false;
+      if (isOwner) return true;
+      if (!role) return false;
+      if (!role.dept) return true;
+      return !deptId || role.dept === deptId;
+    },
     signOut: () => {
       void signOutSchool();
     }
@@ -90,6 +134,9 @@ export default function SchoolGate({ children }: { children: React.ReactNode }) 
         </button>
         {error ? <p className="sg-error">{error}</p> : null}
         <p className="sg-note">여러 계정에 로그인되어 있으면 학교 계정을 골라 주세요.</p>
+        <div className="sg-install">
+          <InstallButton />
+        </div>
       </div>
     </div>
   );
