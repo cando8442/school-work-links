@@ -428,8 +428,10 @@ export const departments: Department[] = [
         ],
         links: [
           { label: "나이스(NEIS) 서울", href: "https://sen.neis.go.kr" },
-          { label: "학교생활기록부 종합지원포털", href: "https://star.moe.go.kr" },
-          { label: "정부24", href: "https://www.gov.kr" }
+          { label: "학생부 종합지원포털", href: "https://star.moe.go.kr" },
+          { label: "국가법령정보센터(초·중등교육법 시행령)", href: "https://www.law.go.kr" },
+          { label: "정부24", href: "https://www.gov.kr" },
+          { label: "서울시교육청 교육과정 운영자료", href: "https://www.sen.go.kr/user/bbs/BD_selectBbs.do?q_bbsSn=1031" }
         ]
       },
       {
@@ -622,7 +624,9 @@ export const departments: Department[] = [
         ],
         links: [
           { label: "나이스(NEIS) 서울", href: "https://sen.neis.go.kr" },
-          { label: "학교생활기록부 종합지원포털", href: "https://star.moe.go.kr" }
+          { label: "학생부 종합지원포털", href: "https://star.moe.go.kr" },
+          { label: "국가법령정보센터(초·중등교육법 시행령)", href: "https://www.law.go.kr" },
+          { label: "서울시교육청 교육과정 운영자료", href: "https://www.sen.go.kr/user/bbs/BD_selectBbs.do?q_bbsSn=1031" }
         ]
       },
       {
@@ -868,8 +872,10 @@ export const departments: Department[] = [
           "인수인계 때 넘길 것: 학교 출결 관리 규정, 그 해 기재요령, 월별 출결 서류철, 출결 정정 대장, 교외체험학습 신청·보고서철, 미인정결석 누적자 관리 명단"
         ],
         links: [
+          { label: "2026 학생부 기재요령(고등학교) PDF", href: "https://www.ice.go.kr/upload/ice/na/bbs_1671/2026/02/4ff84e71a1919e5b158b2fb96191e8bd.pdf" },
           { label: "나이스(NEIS) 서울", href: "https://sen.neis.go.kr" },
-          { label: "학교생활기록부 종합지원포털", href: "https://star.moe.go.kr" }
+          { label: "학생부 종합지원포털", href: "https://star.moe.go.kr" },
+          { label: "국가법령정보센터(초·중등교육법 시행령)", href: "https://www.law.go.kr" }
         ]
       },
       {
@@ -992,6 +998,11 @@ export const departments: Department[] = [
           "나이스 학사일정이 수업일수와 출결의 기준입니다. 여기가 틀리면 출결 통계와 진급 판정이 모두 틀립니다",
           "주간 업무 계획은 창의연구부 업무입니다. 학사일정이 바뀌면 창의연구부에 바로 알려야 주간 계획이 어긋나지 않습니다",
           "인수인계 때 넘길 것: 확정 학사일정 원본 파일, 부서 요청 취합표, 학교운영위원회 심의 기록"
+        ],
+        links: [
+          { label: "국가법령정보센터(초·중등교육법 시행령)", href: "https://www.law.go.kr" },
+          { label: "서울시교육청 교육과정 운영자료", href: "https://www.sen.go.kr/user/bbs/BD_selectBbs.do?q_bbsSn=1031" },
+          { label: "나이스(NEIS) 서울", href: "https://sen.neis.go.kr" }
         ]
       },
       {
@@ -1225,8 +1236,10 @@ export const departments: Department[] = [
           "인수인계 때 넘길 것: 최근 2년 단위 배당표 원본 파일, 교사별 시수 배정표, 제약 조건 목록, 시간표 작성 프로그램 계정과 사용법, 보결 대장"
         ],
         links: [
+          { label: "국가교육과정정보센터(NCIC)", href: "https://www.ncic.re.kr" },
           { label: "나이스(NEIS) 서울", href: "https://sen.neis.go.kr" },
-          { label: "국가교육과정정보센터(NCIC)", href: "https://www.ncic.re.kr" }
+          { label: "서울시교육청 교육과정 지침·연수자료", href: "https://www.sen.go.kr/user/bbs/BD_selectBbs.do?q_bbsSn=1032" },
+          { label: "국가법령정보센터(초·중등교육법 시행령)", href: "https://www.law.go.kr" }
         ]
       },
       {
@@ -1388,8 +1401,10 @@ export const departments: Department[] = [
           "인수인계 때 넘길 것: 그 해 기재요령과 변경점 요약, 연수 자료, 영역별 입력 일정표, 기재 금지 사항 점검표, 학생부 정정 대장과 위원회 회의록"
         ],
         links: [
+          { label: "2026 학생부 기재요령(고등학교) PDF", href: "https://www.ice.go.kr/upload/ice/na/bbs_1671/2026/02/4ff84e71a1919e5b158b2fb96191e8bd.pdf" },
+          { label: "학생부 종합지원포털", href: "https://star.moe.go.kr" },
           { label: "나이스(NEIS) 서울", href: "https://sen.neis.go.kr" },
-          { label: "학교생활기록부 종합지원포털", href: "https://star.moe.go.kr" }
+          { label: "국가법령정보센터(초·중등교육법 시행령)", href: "https://www.law.go.kr" }
         ]
       },
       {
@@ -1623,8 +1638,10 @@ export const departments: Department[] = [
           "인수인계 때 넘길 것: 학교 학업성적관리규정, 그 해 시행지침, 평가계획 서식과 최근 2학기 취합본, 이원목적분류표 서식, 감독 유의사항, 이의신청 처리 대장, 위원회 회의록"
         ],
         links: [
-          { label: "나이스(NEIS) 서울", href: "https://sen.neis.go.kr" },
-          { label: "학교생활기록부 종합지원포털", href: "https://star.moe.go.kr" }
+          { label: "2026 고등학교 학업성적관리 시행지침 PDF", href: "https://www.pen.go.kr/upload/dep07/na/bbs_2629/ntt_1164293/doc_dc66vf893=7fvf3=45vbd=92v0e=15bbvdd97vf056_v9335.pdf" },
+          { label: "서울시교육청 교육과정 지침·연수자료", href: "https://www.sen.go.kr/user/bbs/BD_selectBbs.do?q_bbsSn=1032" },
+          { label: "2026 학생부 기재요령(고등학교) PDF", href: "https://www.ice.go.kr/upload/ice/na/bbs_1671/2026/02/4ff84e71a1919e5b158b2fb96191e8bd.pdf" },
+          { label: "나이스(NEIS) 서울", href: "https://sen.neis.go.kr" }
         ]
       },
       {
@@ -1803,8 +1820,10 @@ export const departments: Department[] = [
           "인수인계 때 넘길 것: 학교 학업성적관리규정, 성적 확인표 서식, 이의 처리 기록, 성적사정회 회의록, 성적 정정 대장, 답안지 보관 위치와 폐기 예정일"
         ],
         links: [
+          { label: "2026 고등학교 학업성적관리 시행지침 PDF", href: "https://www.pen.go.kr/upload/dep07/na/bbs_2629/ntt_1164293/doc_dc66vf893=7fvf3=45vbd=92v0e=15bbvdd97vf056_v9335.pdf" },
+          { label: "서울시교육청 교육과정 지침·연수자료", href: "https://www.sen.go.kr/user/bbs/BD_selectBbs.do?q_bbsSn=1032" },
           { label: "나이스(NEIS) 서울", href: "https://sen.neis.go.kr" },
-          { label: "학교생활기록부 종합지원포털", href: "https://star.moe.go.kr" }
+          { label: "학생부 종합지원포털", href: "https://star.moe.go.kr" }
         ]
       },
       {
@@ -1898,7 +1917,11 @@ export const departments: Department[] = [
           "항목별 담당 부서 매트릭스가 이 업무의 핵심 문서입니다. 없으면 매번 처음부터 사람을 찾아다니게 됩니다",
           "인수인계 때 넘길 것: 항목별 담당 부서 매트릭스, 최근 2년 공시본, 등록 화면 갈무리 폴더, 학교알리미 계정 관리 방법"
         ],
-        links: [{ label: "학교알리미", href: "https://www.schoolinfo.go.kr" }]
+        links: [
+          { label: "학교알리미", href: "https://www.schoolinfo.go.kr" },
+          { label: "학교알리미 공시 지침·기준", href: "https://www.schoolinfo.go.kr/si/pi/pnsipi_a01_l0.do" },
+          { label: "국가법령정보센터(초·중등교육법 시행령)", href: "https://www.law.go.kr" }
+        ]
       },
       {
         id: "af-neis",
@@ -2053,7 +2076,11 @@ export const departments: Department[] = [
           "계정과 인증서를 빌려주거나 대신 처리해 주는 일은 어떤 사정이 있어도 하지 않습니다",
           "인수인계 때 넘길 것: 권한 관리 대장, 권한 신청서 서식, 교육청 나이스 담당·헬프데스크 연락처, 자주 나오는 문의 안내문"
         ],
-        links: [{ label: "나이스(NEIS) 서울", href: "https://sen.neis.go.kr" }]
+        links: [
+          { label: "나이스(NEIS) 서울", href: "https://sen.neis.go.kr" },
+          { label: "개인정보보호위원회", href: "https://www.pipc.go.kr" },
+          { label: "국가법령정보센터(초·중등교육법 시행령)", href: "https://www.law.go.kr" }
+        ]
       }
     ]
   },
