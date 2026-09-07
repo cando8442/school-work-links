@@ -21,7 +21,14 @@ import {
 } from "@/lib/school";
 import { boardPosts } from "@/config/linktree";
 import { SCHOOL } from "@/config/school";
-import { departments, notices, type Department, type Duty, type Notice } from "@/config/departments";
+import {
+  departments,
+  notices,
+  type Department,
+  type Duty,
+  type Flow,
+  type Notice
+} from "@/config/departments";
 
 const HOME = "home";
 
@@ -431,6 +438,80 @@ function HomeView() {
 /* 부서 화면                              */
 /* ------------------------------------- */
 
+/* 업무 흐름도 한 갈래입니다.
+   위에서 아래로 한 칸씩 내려가면서, 칸마다 언제·누가·어디서·무엇을 남기는지 보여 줍니다. */
+function FlowChart({ flow }: { flow: Flow }) {
+  return (
+    <section className="flow">
+      <header className="flow-head">
+        <h4 className="flow-title">{flow.title}</h4>
+        <dl className="flow-meta">
+          {flow.trigger ? (
+            <div className="flow-meta-row">
+              <dt>시작 신호</dt>
+              <dd>{flow.trigger}</dd>
+            </div>
+          ) : null}
+          {flow.duration ? (
+            <div className="flow-meta-row">
+              <dt>걸리는 기간</dt>
+              <dd>{flow.duration}</dd>
+            </div>
+          ) : null}
+          {flow.basis ? (
+            <div className="flow-meta-row">
+              <dt>근거</dt>
+              <dd>{flow.basis}</dd>
+            </div>
+          ) : null}
+        </dl>
+      </header>
+
+      <ol className="flow-steps">
+        {flow.steps.map((step, i) => (
+          <li key={i} className="flow-step">
+            <div className="flow-node">
+              <h5 className="flow-phase">{step.phase}</h5>
+
+              <ul className="flow-tags">
+                <li className="ft-when">언제 · {step.when}</li>
+                {step.who ? <li className="ft-who">누가 · {step.who}</li> : null}
+                {step.where ? <li className="ft-where">어디서 · {step.where}</li> : null}
+              </ul>
+
+              <ul className="flow-actions">
+                {step.actions.map((action, j) => (
+                  <li key={j}>{action}</li>
+                ))}
+              </ul>
+
+              {step.output ? (
+                <p className="flow-output">
+                  <span>남는 것</span>
+                  {step.output}
+                </p>
+              ) : null}
+
+              {step.caution ? (
+                <p className="flow-caution">
+                  <span>주의</span>
+                  {step.caution}
+                </p>
+              ) : null}
+            </div>
+
+            {i < flow.steps.length - 1 ? (
+              <span className="flow-arrow" aria-hidden="true">
+                ↓
+              </span>
+            ) : null}
+          </li>
+        ))}
+      </ol>
+    </section>
+  );
+}
+
 function DutyDetail({ duty, deptId, onBack }: { duty: Duty; deptId: string; onBack: () => void }) {
   return (
     <article className="duty-detail">
@@ -457,9 +538,23 @@ function DutyDetail({ duty, deptId, onBack }: { duty: Duty; deptId: string; onBa
         </ul>
       </section>
 
+      {duty.flows && duty.flows.length > 0 ? (
+        <section className="duty-block">
+          <h3>업무 흐름도</h3>
+          <p className="duty-block-lead">
+            인수인계를 받은 사람이 이 순서대로만 따라가도 일이 굴러가도록 적은 흐름입니다.
+          </p>
+          <div className="flow-set">
+            {duty.flows.map((flow, i) => (
+              <FlowChart key={i} flow={flow} />
+            ))}
+          </div>
+        </section>
+      ) : null}
+
       {duty.howto && duty.howto.length > 0 ? (
         <section className="duty-block">
-          <h3>처리 절차</h3>
+          <h3>처리 절차 한눈에</h3>
           <ol className="step-list">
             {duty.howto.map((step, i) => (
               <li key={i}>{step}</li>
@@ -544,6 +639,7 @@ function DeptView({ dept }: { dept: Department }) {
                 <span className="duty-card-sum">{duty.summary}</span>
                 <span className="duty-card-meta">
                   반복 업무 {duty.routines.length}건
+                  {duty.flows && duty.flows.length > 0 ? ` · 흐름도 ${duty.flows.length}갈래` : ""}
                   {duty.links && duty.links.length > 0 ? ` · 링크 ${duty.links.length}개` : ""}
                 </span>
               </button>
