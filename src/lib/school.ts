@@ -33,6 +33,8 @@ import {
   setDoc,
   updateDoc,
   where,
+  writeBatch,
+  getDocs,
   type Firestore
 } from "firebase/firestore";
 
@@ -61,7 +63,12 @@ export const LIMITS = {
   target: 30,
   routines: 10,
   links: 10,
-  targets: 60
+  targets: 60,
+  /* 교사 명단과 제출 대상자 */
+  personName: 20,
+  email: 120,
+  assignees: 200,
+  teachers: 400
 } as const;
 
 export type SavedRoutine = { cycle: string; what: string };
@@ -79,7 +86,13 @@ export type SavedDuty = {
   authorName: string;
 };
 
-/* 제출 과제입니다. 이름 대신 과목명·동아리명 같은 것을 주체로 씁니다. */
+/* 제출 대상자입니다. 교사 명단에서 골라 넣습니다. */
+export type Assignee = { name: string; email: string };
+
+/* 제출 과제입니다.
+   targets 는 과목명·동아리명처럼 업무 단위 주체이고,
+   assignees 는 교사 명단에서 고른 실제 사람입니다. 둘 다 쓸 수 있습니다.
+   done 에는 제출을 마친 주체 이름과 대상자 이메일이 함께 들어갑니다. */
 export type SavedTask = {
   id: string;
   deptId: string;
@@ -87,9 +100,22 @@ export type SavedTask = {
   due: string;
   docUrl: string;
   guide: string;
+  /* 이 과제를 챙기는 사람입니다. */
+  ownerName: string;
+  ownerEmail: string;
   targets: string[];
+  assignees: Assignee[];
   done: string[];
   authorEmail: string;
+};
+
+/* 학교 교사 명단입니다. 제출 대상자를 고를 때 씁니다. */
+export type Teacher = {
+  /* 문서 아이디이자 로그인 이메일입니다. */
+  email: string;
+  name: string;
+  /* 소속 부서 표시입니다. 비워 둘 수 있습니다. */
+  dept: string;
 };
 
 export type SchoolUser = {
@@ -272,7 +298,10 @@ export function watchTasks(onData: (tasks: SavedTask[]) => void, onError?: () =>
             due: String(data.due ?? ""),
             docUrl: String(data.docUrl ?? ""),
             guide: String(data.guide ?? ""),
+            ownerName: String(data.ownerName ?? ""),
+            ownerEmail: String(data.ownerEmail ?? ""),
             targets: Array.isArray(data.targets) ? (data.targets as string[]) : [],
+            assignees: Array.isArray(data.assignees) ? (data.assignees as Assignee[]) : [],
             done: Array.isArray(data.done) ? (data.done as string[]) : [],
             authorEmail: String(data.authorEmail ?? "")
           };
@@ -289,7 +318,10 @@ export type TaskInput = {
   due: string;
   docUrl: string;
   guide: string;
+  ownerName: string;
+  ownerEmail: string;
   targets: string[];
+  assignees: Assignee[];
 };
 
 function cleanTask(input: TaskInput, user: SchoolUser) {
@@ -299,11 +331,28 @@ function cleanTask(input: TaskInput, user: SchoolUser) {
     due: input.due.trim(),
     docUrl: /^https?:\/\//i.test(input.docUrl.trim()) ? input.docUrl.trim().slice(0, LIMITS.href) : "",
     guide: input.guide.trim().slice(0, LIMITS.summary),
+    ownerName: input.ownerName.trim().slice(0, LIMITS.personName),
+    ownerEmail: input.ownerEmail.trim().toLowerCase().slice(0, LIMITS.email),
     targets: Array.from(
       new Set(input.targets.map(t => t.trim().slice(0, LIMITS.target)).filter(Boolean))
     ).slice(0, LIMITS.targets),
+    assignees: dedupeAssignees(input.assignees).slice(0, LIMITS.assignees),
     authorEmail: user.email
   };
+}
+
+/* 같은 이메일이 두 번 들어가지 않게 정리합니다. */
+function dedupeAssignees(list: Assignee[]) {
+  const seen = new Set<string>();
+  const out: Assignee[] = [];
+  for (const person of list) {
+    const email = person.email.trim().toLowerCase().slice(0, LIMITS.email);
+    const name = person.name.trim().slice(0, LIMITS.personName);
+    if (!email || seen.has(email)) continue;
+    seen.add(email);
+    out.push({ name, email });
+  }
+  return out;
 }
 
 export async function addTask(input: TaskInput, user: SchoolUser) {
@@ -311,7 +360,10 @@ export async function addTask(input: TaskInput, user: SchoolUser) {
   const body = cleanTask(input, user);
   if (!body.title) throw new Error("제출 과제 이름을 적어 주세요.");
   if (!/^\d{4}-\d{2}-\d{2}$/.test(body.due)) throw new Error("마감일을 골라 주세요.");
-  if (body.targets.length === 0) throw new Error("제출 주체를 하나 이상 적어 주세요.");
+  if (body.targets.length === 0 && body.assignees.length === 0)
+    throw new Error("제출 주체나 제출 대상자를 하나 이상 지정해 주세요.");
+  if (body.ownerEmail && !isSchoolEmail(body.ownerEmail))
+    throw new Error("담당자 이메일은 학교 계정이어야 합니다.");
   await addDoc(collection(db, "tasks"), { ...body, done: [], createdAt: serverTimestamp() });
 }
 
@@ -325,6 +377,108 @@ export async function updateTask(id: string, input: TaskInput, user: SchoolUser)
 export async function removeTask(id: string) {
   if (!ready() || !db) throw new Error("아직 저장소가 설정되지 않았습니다.");
   await deleteDoc(doc(db, "tasks", id));
+}
+
+/* ------------------------------------- */
+/* 교사 명단                              */
+/* ------------------------------------- */
+
+/* 이름만 적힌 줄에는 학교 도메인을 붙여 이메일을 만듭니다.
+   한 줄에 "홍길동, hong" 또는 "홍길동, hong@seoulsejong.sen.hs.kr" 처럼 적습니다. */
+export function parseTeacherText(text: string): Teacher[] {
+  const domain = SCHOOL_DOMAINS[0] ?? "";
+  const out: Teacher[] = [];
+
+  for (const raw of text.split("\n")) {
+    const line = raw.replace("\r", "").trim();
+    if (!line) continue;
+
+    /* 쉼표, 탭, 세미콜론, 두 칸 이상 공백으로 칸을 나눕니다. */
+    const cells = line
+      .split(/[\t,;]+|\s{2,}/)
+      .map(c => c.trim())
+      .filter(Boolean);
+
+    /* 칸이 하나뿐이면 "홍길동 hong" 처럼 한 칸 띄어 쓴 것으로 봅니다. */
+    const parts = cells.length === 1 ? cells[0].split(/\s+/) : cells;
+    if (parts.length < 2) continue;
+
+    const name = parts[0];
+    let account = parts[1];
+    const dept = parts[2] ?? "";
+
+    if (!account) continue;
+    if (!account.includes("@")) account = domain ? account + "@" + domain : account;
+    if (!account.includes("@")) continue;
+
+    out.push({
+      name: name.slice(0, LIMITS.personName),
+      email: account.toLowerCase().slice(0, LIMITS.email),
+      dept: dept.slice(0, LIMITS.personName)
+    });
+  }
+
+  return out;
+}
+
+export function watchTeachers(onData: (list: Teacher[]) => void) {
+  if (!ready() || !db) {
+    onData([]);
+    return () => {};
+  }
+  return onSnapshot(collection(db, "teachers"), snapshot => {
+    const list = snapshot.docs.map(d => {
+      const data = d.data() as Record<string, unknown>;
+      return {
+        email: String(data.email ?? d.id),
+        name: String(data.name ?? ""),
+        dept: String(data.dept ?? "")
+      };
+    });
+    list.sort((a, b) => a.name.localeCompare(b.name, "ko"));
+    onData(list);
+  });
+}
+
+/* 명단을 한꺼번에 올립니다. 같은 이메일은 덮어씁니다. */
+export async function saveTeachers(list: Teacher[], user: SchoolUser) {
+  if (!ready() || !db) throw new Error("아직 저장소가 설정되지 않았습니다.");
+  const clean = list
+    .filter(t => t.email && isSchoolEmail(t.email))
+    .slice(0, LIMITS.teachers);
+  if (clean.length === 0) throw new Error("올릴 수 있는 학교 계정이 없습니다.");
+
+  /* 파이어스토어 일괄 쓰기는 한 번에 500건까지입니다. */
+  for (let i = 0; i < clean.length; i += 400) {
+    const batch = writeBatch(db);
+    for (const person of clean.slice(i, i + 400)) {
+      batch.set(doc(db, "teachers", person.email), {
+        email: person.email,
+        name: person.name,
+        dept: person.dept,
+        updatedBy: user.email
+      });
+    }
+    await batch.commit();
+  }
+  return clean.length;
+}
+
+export async function removeTeacher(email: string) {
+  if (!ready() || !db) throw new Error("아직 저장소가 설정되지 않았습니다.");
+  await deleteDoc(doc(db, "teachers", email));
+}
+
+/* 명단을 통째로 비웁니다. 새 학년도에 명단을 갈아 끼울 때 씁니다. */
+export async function clearTeachers() {
+  if (!ready() || !db) throw new Error("아직 저장소가 설정되지 않았습니다.");
+  const snapshot = await getDocs(collection(db, "teachers"));
+  for (let i = 0; i < snapshot.docs.length; i += 400) {
+    const batch = writeBatch(db);
+    for (const d of snapshot.docs.slice(i, i + 400)) batch.delete(d.ref);
+    await batch.commit();
+  }
+  return snapshot.docs.length;
 }
 
 /* 제출 주체 하나의 완료 표시를 켜고 끕니다. */

@@ -47,6 +47,13 @@ service cloud.firestore {
       return schoolAccount() && resource.data.authorEmail == request.auth.token.email;
     }
 
+    /* 제출 과제에 적힌 담당자입니다. 만든 사람과 같은 권한을 줍니다. */
+    function isTaskOwner() {
+      return schoolAccount()
+        && 'ownerEmail' in resource.data
+        && resource.data.ownerEmail == request.auth.token.email;
+    }
+
     match /duties/{dutyId} {
       allow read: if schoolAccount();
 
@@ -75,17 +82,36 @@ service cloud.firestore {
         && request.resource.data.title.size() <= 60
         && request.resource.data.due is string
         && request.resource.data.targets.size() <= 60
+        && request.resource.data.assignees.size() <= 200
         && request.resource.data.done.size() == 0;
 
-      /* 제출 완료 표시만 바꾸는 경우는 학교 계정이면 누구나 할 수 있습니다. */
+      /* 제출 완료 표시는 과제 담당자와 본인만 바꿀 수 있습니다.
+         담당자가 아니면 자기 이메일 하나만 넣거나 뺄 수 있습니다. */
       allow update: if schoolAccount()
         && (
           isAuthor()
-          || (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['done'])
-              && request.resource.data.done.size() <= 60)
+          || isTaskOwner()
+          || (
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly(['done'])
+            && request.resource.data.done.size() <= 260
+            && request.resource.data.done.removeAll(resource.data.done).hasOnly([request.auth.token.email])
+            && resource.data.done.removeAll(request.resource.data.done).hasOnly([request.auth.token.email])
+          )
         );
 
-      allow delete: if isAuthor();
+      allow delete: if isAuthor() || isTaskOwner();
+    }
+
+    /* 교사 명단입니다. 제출 대상자를 고를 때 씁니다.
+       읽기는 학교 계정 누구나, 쓰기는 편집 권한자만 할 수 있습니다. */
+    match /teachers/{teacherEmail} {
+      allow read: if schoolAccount();
+      allow write: if canEditDept('')
+        && (request.method == 'delete'
+            || (request.resource.data.email is string
+                && request.resource.data.email.matches('.*@seoulsejong[.]sen[.]hs[.]kr$')
+                && request.resource.data.name is string
+                && request.resource.data.name.size() <= 20));
     }
 
     match /depts/{deptId} {

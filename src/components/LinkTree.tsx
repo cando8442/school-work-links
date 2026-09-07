@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { asset } from "@/lib/asset";
 import Calendar from "@/components/Calendar";
 import AdminPanel from "@/components/AdminPanel";
+import TaskAlert from "@/components/TaskAlert";
+import TeacherRoster from "@/components/TeacherRoster";
 import ScheduleImport from "@/components/ScheduleImport";
 import DutyEditor from "@/components/DutyEditor";
 import { DriveBar, FormList, PostBoard } from "@/components/DeptExtras";
@@ -411,6 +413,8 @@ function HomeView() {
 
       <ScheduleImport events={events} />
 
+      <TeacherRoster />
+
       <AdminPanel />
 
       {boardPosts.length > 0 ? (
@@ -752,6 +756,8 @@ export default function LinkTree() {
           ) : null}
         </p>
       </footer>
+
+      <TaskAlert />
     </div>
   );
 }

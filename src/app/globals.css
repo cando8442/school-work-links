@@ -1839,3 +1839,459 @@ img {
   color: var(--wine);
   text-decoration: underline;
 }
+
+/* ------------------------------------- */
+/* 제출 대상자 고르기                      */
+/* ------------------------------------- */
+.ap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ap-empty {
+  padding: 10px 12px;
+  font-size: 14px;
+  color: var(--muted);
+  background: var(--paper);
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+}
+
+.ap-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ap-bar input {
+  flex: 1 1 160px;
+  min-width: 0;
+}
+
+.ap-bar button {
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--wine);
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+
+.ap-bar button:hover {
+  color: var(--white);
+  background: var(--wine);
+  border-color: var(--wine);
+}
+
+.ap-count {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--brick);
+}
+
+.ap-list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 210px;
+  padding: 8px;
+  overflow-y: auto;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.ap-item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  padding: 5px 11px;
+  font-size: 13.5px;
+  color: var(--ink);
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+
+.ap-item:hover {
+  border-color: var(--wine);
+}
+
+.ap-item.is-on {
+  font-weight: 700;
+  color: var(--white);
+  background: var(--wine);
+  border-color: var(--wine);
+}
+
+.ap-dept {
+  font-size: 11.5px;
+  opacity: 0.75;
+}
+
+/* ------------------------------------- */
+/* 교사 명단                              */
+/* ------------------------------------- */
+.tr {
+  margin-bottom: 26px;
+  padding: 16px 18px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.tr-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.tr-head .sec-title {
+  margin: 0;
+}
+
+.tr-count {
+  padding: 2px 9px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--brick);
+  background: var(--paper-deep);
+  border-radius: 999px;
+}
+
+.tr-toggle {
+  margin-left: auto;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--wine);
+  border: 1px solid var(--wine);
+  border-radius: 999px;
+}
+
+.tr-toggle:hover {
+  color: var(--white);
+  background: var(--wine);
+}
+
+.tr-lead {
+  margin: 6px 0 10px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.tr-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: var(--paper);
+  border-radius: 8px;
+}
+
+.tr-help {
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--body);
+}
+
+.tr-editor textarea {
+  width: 100%;
+  padding: 10px;
+  font-family: var(--font);
+  font-size: 14px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+.tr-preview {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--brick);
+}
+
+.tr-ok {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #2F5140;
+}
+
+.tr-search {
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+.tr-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.tr-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 10px;
+  font-size: 14px;
+  background: var(--paper);
+  border-radius: 6px;
+}
+
+.tr-name {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.tr-dept {
+  padding: 1px 7px;
+  font-size: 11.5px;
+  color: var(--brick);
+  background: var(--paper-deep);
+  border-radius: 4px;
+}
+
+.tr-mail {
+  flex: 1;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.tr-del {
+  font-size: 12.5px;
+  color: var(--crimson);
+}
+
+.tr-del:hover {
+  text-decoration: underline;
+}
+
+/* ------------------------------------- */
+/* 제출 과제 담당자와 대상자                */
+/* ------------------------------------- */
+.tk-owner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--brick);
+}
+
+.tk-owner-mail {
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: underline;
+}
+
+.tk-me {
+  padding: 6px 11px;
+  margin-bottom: 8px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #7A2A1C;
+  background: #FBEDE9;
+  border: 1px solid #EFCFC6;
+  border-radius: 6px;
+}
+
+.tk-me.is-done {
+  color: #2F5140;
+  background: #EDF5EF;
+  border-color: #CFE3D6;
+}
+
+.tk.is-mine {
+  border-left: 4px solid var(--crimson);
+}
+
+.tk-people {
+  margin-top: 8px;
+}
+
+.tk-fold {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--wine);
+}
+
+.tk-fold:hover {
+  text-decoration: underline;
+}
+
+.tk-undone {
+  margin-top: 5px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.tk-undone.is-clear {
+  color: #2F5140;
+  font-weight: 700;
+}
+
+.tk-chip.is-locked {
+  opacity: 0.85;
+  cursor: default;
+}
+
+/* ------------------------------------- */
+/* 내 제출 과제 알림                       */
+/* ------------------------------------- */
+.ta {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 60;
+  width: min(400px, calc(100vw - 32px));
+  overflow: hidden;
+  background: var(--white);
+  border: 1px solid var(--wine);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(46, 39, 36, 0.22);
+}
+
+.ta-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  color: var(--white);
+  background: var(--wine);
+}
+
+.ta-badge {
+  flex: 0 0 auto;
+  min-width: 22px;
+  padding: 1px 6px;
+  font-size: 12.5px;
+  font-weight: 800;
+  text-align: center;
+  color: var(--wine);
+  background: var(--white);
+  border-radius: 999px;
+}
+
+.ta-title {
+  flex: 1;
+  font-size: 14px;
+}
+
+.ta-fold,
+.ta-close {
+  flex: 0 0 auto;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--white);
+  opacity: 0.9;
+}
+
+.ta-fold:hover,
+.ta-close:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.ta-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  max-height: 46vh;
+  overflow-y: auto;
+}
+
+.ta-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  font-size: 13.5px;
+  border-top: 1px solid var(--line-soft);
+}
+
+.ta-left {
+  flex: 0 0 auto;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--brick);
+  background: var(--paper-deep);
+  border-radius: 4px;
+}
+
+.ta-list li.is-soon .ta-left {
+  color: var(--white);
+  background: var(--brick);
+}
+
+.ta-list li.is-over .ta-left {
+  color: var(--white);
+  background: var(--crimson);
+}
+
+.ta-name {
+  flex: 1 1 140px;
+  min-width: 0;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.ta-name em {
+  margin-right: 6px;
+  font-size: 11.5px;
+  font-style: normal;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.ta-go {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--wine);
+  text-decoration: underline;
+}
+
+.ta-done {
+  padding: 4px 11px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--white);
+  background: var(--wine);
+  border-radius: 999px;
+}
+
+.ta-done:hover {
+  background: var(--wine-dark);
+}
+
+.ta-more {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+@media (max-width: 640px) {
+  .ta {
+    right: 10px;
+    left: 10px;
+    bottom: 10px;
+    width: auto;
+  }
+
+  .tr-list li {
+    gap: 6px;
+  }
+}
