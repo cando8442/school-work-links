@@ -562,33 +562,35 @@ img {
 }
 
 /* 공용 링크 */
+/* 공용 링크는 한 줄에 하나씩, 두 칸으로 늘어놓습니다.
+   설명과 주소는 자리를 많이 먹어 화면에서는 감추고 마우스를 올리면 보여 줍니다. */
 .link-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 12px;
 }
 
 .link-card {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  height: 100%;
-  padding: 14px 16px;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+  padding: 7px 12px;
   background: var(--white);
   border: 1px solid var(--line);
-  border-radius: 8px;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  border-radius: 6px;
+  transition: border-color 0.15s, background 0.15s;
 }
 
 .link-card:hover {
   border-color: var(--brick);
-  box-shadow: var(--shadow);
+  background: var(--tint);
 }
 
 .link-tag {
-  align-self: flex-start;
-  padding: 2px 8px;
-  font-size: 12px;
+  flex: 0 0 auto;
+  padding: 1px 7px;
+  font-size: 11.5px;
   font-weight: 700;
   color: var(--brick);
   background: var(--paper-deep);
@@ -596,19 +598,19 @@ img {
 }
 
 .link-title {
-  font-size: 15px;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 14.5px;
   font-weight: 700;
   color: var(--ink);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.link-sum {
-  font-size: 14px;
-  color: var(--body);
-}
-
+.link-sum,
 .link-host {
-  font-size: 13px;
-  color: var(--muted);
+  display: none;
 }
 
 /* 부서 화면 */
@@ -2306,4 +2308,11 @@ img {
 
 .dl-group.is-week .dl-group-title {
   color: var(--wine);
+}
+
+/* 좁은 화면에서는 공용 링크를 한 줄에 하나만 둡니다. */
+@media (max-width: 640px) {
+  .link-grid {
+    grid-template-columns: 1fr;
+  }
 }
