@@ -2295,3 +2295,15 @@ img {
     gap: 6px;
   }
 }
+
+/* 이번 주 공지로 쓰는 마감 묶음입니다. */
+.dl-group.is-week {
+  padding: 12px 12px 4px;
+  background: var(--blush-soft);
+  border: 1px solid var(--blush);
+  border-radius: 8px;
+}
+
+.dl-group.is-week .dl-group-title {
+  color: var(--wine);
+}

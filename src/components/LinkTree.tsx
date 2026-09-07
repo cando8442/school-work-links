@@ -18,7 +18,9 @@ import {
   removeEvent,
   setEventLinks,
   watchEvents,
+  watchTasks,
   type SavedLink,
+  type SavedTask,
   type SchoolEvent
 } from "@/lib/school";
 import { boardPosts } from "@/config/linktree";
@@ -79,7 +81,16 @@ function stateOf(left: number) {
 
 /* 마감 한 줄입니다. 누르면 펼쳐지고, 그 안에 이 일을 하려면 열어야 하는 링크가 있습니다.
    보는 것은 로그인한 사람 모두, 고치는 것은 담당자와 권한자만 할 수 있습니다. */
-function DeadlineRow({ notice, event }: { notice: Notice; event?: SchoolEvent }) {
+function DeadlineRow({
+  notice,
+  event,
+  extraLinks
+}: {
+  notice: Notice;
+  event?: SchoolEvent;
+  /* 제출 과제처럼 학사일정이 아닌 곳에서 온 항목의 링크입니다. */
+  extraLinks?: SavedLink[];
+}) {
   const { user, canEdit } = useSchoolUser();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -90,7 +101,7 @@ function DeadlineRow({ notice, event }: { notice: Notice; event?: SchoolEvent })
   const [info, setInfo] = useState({ date: "", title: "", dept: "", detail: "", kind: "deadline" });
 
   const left = daysLeft(notice.due);
-  const links = event?.links ?? [];
+  const links = event?.links ?? extraLinks ?? [];
   const mine = Boolean(event) && (canEdit() || user?.email === event?.authorEmail);
 
   const startInfo = () => {
@@ -170,7 +181,7 @@ function DeadlineRow({ notice, event }: { notice: Notice; event?: SchoolEvent })
               </ul>
             ) : (
               <span className="fm-hint">
-                {event ? "아직 걸어 둔 시트나 서식이 없습니다." : "링크를 걸 수 없는 항목입니다."}
+                {event ? "아직 걸어 둔 시트나 서식이 없습니다." : "걸어 둔 링크가 없습니다."}
               </span>
             )}
 
@@ -297,13 +308,44 @@ function DeadlineRow({ notice, event }: { notice: Notice; event?: SchoolEvent })
 
 function HomeView() {
   const [events, setEvents] = useState<SchoolEvent[]>([]);
+  const [tasks, setTasks] = useState<SavedTask[]>([]);
 
   useEffect(() => watchEvents(setEvents), []);
+  useEffect(() => watchTasks(setTasks), []);
+
+  /* 제출 과제도 마감입니다. 마감 기한 목록과 달력에 함께 올립니다. */
+  const taskNotices = useMemo<Notice[]>(
+    () =>
+      tasks
+        .filter(t => t.due)
+        .map(t => {
+          const total = t.targets.length + t.assignees.length;
+          const done =
+            t.targets.filter(x => t.done.includes(x)).length +
+            t.assignees.filter(a => t.done.includes(a.email)).length;
+          const dept = departments.find(d => d.id === t.deptId)?.name ?? "제출";
+          const owner = t.ownerName ? `담당 ${t.ownerName}` : "";
+          const count = total > 0 ? `제출 ${done}/${total}` : "";
+          const detail = [t.guide, owner, count].filter(Boolean).join(" · ");
+          return { id: `task-${t.id}`, due: t.due, dept, title: t.title, detail };
+        }),
+    [tasks]
+  );
+
+  /* 마감 줄에서 바로 열 수 있게 과제 문서 링크를 붙여 둡니다. */
+  const taskLinks = useMemo(() => {
+    const map = new Map<string, SavedLink[]>();
+    for (const task of tasks) {
+      if (task.docUrl) map.set(`task-${task.id}`, [{ label: "제출 문서 열기", href: task.docUrl }]);
+    }
+    return map;
+  }, [tasks]);
 
   /* 달력에는 코드에 적힌 마감과 가져온 학사일정을 함께 보여 줍니다. */
   const calendarItems = useMemo<Notice[]>(
     () => [
       ...notices,
+      ...taskNotices,
       ...events.filter(e => e.status !== "pending").map(e => ({
         id: e.id,
         due: e.date,
@@ -312,7 +354,7 @@ function HomeView() {
         detail: e.detail
       }))
     ],
-    [events]
+    [events, taskNotices]
   );
 
   /* 마감 목록에는 마감으로 표시한 것만 넣습니다. */
@@ -320,8 +362,8 @@ function HomeView() {
     const fromEvents: Notice[] = events
       .filter(e => e.kind === "deadline" && e.status !== "pending")
       .map(e => ({ id: e.id, due: e.date, dept: e.dept || "마감", title: e.title, detail: e.detail }));
-    return [...notices, ...fromEvents].sort((a, b) => a.due.localeCompare(b.due));
-  }, [events]);
+    return [...notices, ...taskNotices, ...fromEvents].sort((a, b) => a.due.localeCompare(b.due));
+  }, [events, taskNotices]);
 
   const eventById = useMemo(() => new Map(events.map(e => [e.id, e])), [events]);
 
@@ -356,7 +398,7 @@ function HomeView() {
               <h3 className="dl-group-title">오늘까지</h3>
               <ul className="dl-list">
                 {todayList.map(n => (
-                  <DeadlineRow key={n.id} notice={n} event={eventById.get(n.id)} />
+                  <DeadlineRow key={n.id} notice={n} event={eventById.get(n.id)} extraLinks={taskLinks.get(n.id)} />
                 ))}
               </ul>
             </div>
@@ -369,20 +411,20 @@ function HomeView() {
               <h3 className="dl-group-title">기한이 지난 일</h3>
               <ul className="dl-list">
                 {overdue.map(n => (
-                  <DeadlineRow key={n.id} notice={n} event={eventById.get(n.id)} />
+                  <DeadlineRow key={n.id} notice={n} event={eventById.get(n.id)} extraLinks={taskLinks.get(n.id)} />
                 ))}
               </ul>
             </div>
           ) : null}
 
-          <div className="dl-group">
-            <h3 className="dl-group-title">이번 주 안에</h3>
+          <div className={`dl-group${week.length > 0 ? " is-week" : ""}`}>
+            <h3 className="dl-group-title">이번 주 공지 · 이번 주 안에 마감</h3>
             {week.length === 0 ? (
               <div className="dl-empty">이번 주 마감은 없습니다.</div>
             ) : (
               <ul className="dl-list">
                 {week.map(n => (
-                  <DeadlineRow key={n.id} notice={n} event={eventById.get(n.id)} />
+                  <DeadlineRow key={n.id} notice={n} event={eventById.get(n.id)} extraLinks={taskLinks.get(n.id)} />
                 ))}
               </ul>
             )}
@@ -393,7 +435,7 @@ function HomeView() {
               <h3 className="dl-group-title">다가오는 일</h3>
               <ul className="dl-list">
                 {later.map(n => (
-                  <DeadlineRow key={n.id} notice={n} event={eventById.get(n.id)} />
+                  <DeadlineRow key={n.id} notice={n} event={eventById.get(n.id)} extraLinks={taskLinks.get(n.id)} />
                 ))}
               </ul>
             </div>
