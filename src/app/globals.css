@@ -197,6 +197,10 @@ img {
   margin-bottom: 12px;
 }
 
+.ib-guide-steps + .ib-guide-title {
+  margin-top: 14px;
+}
+
 .ib-guide-download {
   width: 100%;
   padding: 11px;
